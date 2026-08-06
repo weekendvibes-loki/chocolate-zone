@@ -160,9 +160,10 @@ export const uploadRequestSchema = z.object({
 });
 
 // Shared helper used by every handler
-export function parseWithSchema<T>(schema: z.ZodType<T>, body: unknown):
-  | { ok: true; data: T }
-  | { ok: false; errors: z.ZodError } {
+export function parseWithSchema<TSchema extends z.ZodTypeAny>(
+  schema: TSchema,
+  body: unknown,
+): { ok: true; data: z.output<TSchema> } | { ok: false; errors: z.ZodError } {
   const r = schema.safeParse(body);
   return r.success ? { ok: true, data: r.data } : { ok: false, errors: r.error };
 }

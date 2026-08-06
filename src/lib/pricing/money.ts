@@ -18,6 +18,16 @@ export function fromMinor(minor: Minor): string {
   return (minor / 100).toFixed(2);
 }
 
+/**
+ * minor units → numeric value to SEND to the DB (numeric(10,2) column).
+ * PostgREST accepts a JSON number for numeric columns and the generated types
+ * type them as `number`; `fromMinor` is still the canonical formatting used
+ * everywhere else (e.g. toMinor/fromMinor round-trips and message building).
+ */
+export function toDbNumeric(minor: Minor): number {
+  return Number(fromMinor(minor));
+}
+
 /** Human display. Uses Intl with the given currency; falls back to "<code> <amount>" if locale data is unavailable. */
 export function formatMoney(minor: Minor, currency: Currency): string {
   try {
