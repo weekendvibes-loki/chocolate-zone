@@ -1,0 +1,39 @@
+# Supabase project configuration — docs/SUPABASE.md §1.4.
+# Committed, environment-agnostic, contains NO secrets (keys/passwords live in env).
+# Placeholders: replace <vercel-app> / <custom-domain> with real values per env.
+
+project_id = "chocolate-zone"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+port = 54322
+major_version = 15
+
+[auth]
+enabled = true
+site_url = "https://<vercel-app>.vercel.app"
+additional_redirect_urls = ["https://<custom-domain>"]
+jwt_expiry = 3600
+# Signups disabled: the only user is created once by an admin (docs/AUTH.md).
+# "Allow new users to sign up" in the dashboard must ALSO be OFF in production.
+enable_signup = false
+
+[auth.email]
+enable_signup = false
+# One admin user; the magic link itself proves possession of the mailbox,
+# so no extra confirmation step is needed.
+enable_confirmations = false
+# Magic-link / OTP expiry. 30 min balances convenience and stale-link risk.
+otp_expiry = 1800
+
+[auth.email.template.magic_link]
+subject = "Chocolate Zone — admin sign-in link"
+content_path = "./supabase/templates/magic-link.html"
+
+[realtime]
+enabled = true
