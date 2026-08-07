@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
 export interface Column<T> {
   key: string;
@@ -8,6 +8,7 @@ export interface Column<T> {
   render: (row: T) => ReactNode;
   className?: string;
   hideOnMobile?: boolean;
+  sortValue?: (row: T) => string | number;
 }
 
 interface DataTableProps<T> {
@@ -18,7 +19,35 @@ interface DataTableProps<T> {
   onDelete?: (row: T) => void;
 }
 
+type SortDir = 'asc' | 'desc';
+
 export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTableProps<T>) {
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
+
+  const sorted = useMemo(() => {
+    if (!sortKey) return rows;
+    const col = columns.find((c) => c.key === sortKey && c.sortValue);
+    if (!col?.sortValue) return rows;
+    const dir = sortDir === 'asc' ? 1 : -1;
+    return [...rows].sort((a, b) => {
+      const av = col.sortValue!(a);
+      const bv = col.sortValue!(b);
+      if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
+      return String(av).localeCompare(String(bv), undefined, { numeric: true }) * dir;
+    });
+  }, [rows, columns, sortKey, sortDir]);
+
+  const toggleSort = (col: Column<T>) => {
+    if (!col.sortValue) return;
+    if (sortKey === col.key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(col.key);
+      setSortDir('asc');
+    }
+  };
+
   return (
     <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
       <table className="w-full min-w-[640px] text-left text-sm">
@@ -26,14 +55,38 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
           <tr className="border-b border-zinc-200 bg-zinc-50">
             {columns.map((col) => (
               <th key={col.key} className="px-4 py-3 font-medium text-zinc-500">
-                {col.header}
+                {col.sortValue ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleSort(col)}
+                    className={`inline-flex items-center gap-1 transition-colors hover:text-zinc-900 ${
+                      sortKey === col.key ? 'text-zinc-900' : ''
+                    }`}
+                  >
+                    {col.header}
+                    <svg
+                      className={`size-3 transition-transform ${
+                        sortKey === col.key ? 'opacity-100' : 'opacity-40'
+                      } ${sortKey === col.key && sortDir === 'desc' ? 'rotate-180' : ''}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      aria-hidden="true"
+                    >
+                      <path d="m6 15 6-6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                ) : (
+                  col.header
+                )}
               </th>
             ))}
             {(onEdit || onDelete) && <th className="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-100">
-          {rows.map((row) => (
+          {sorted.map((row) => (
             <tr key={rowKey(row)} className="transition-colors hover:bg-zinc-50">
               {columns.map((col) => (
                 <td key={col.key} className={`px-4 py-3 text-zinc-700 ${col.className ?? ''}`}>

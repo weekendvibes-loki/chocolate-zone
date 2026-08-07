@@ -7,6 +7,9 @@ import { CrudDialog } from '@/components/admin/crud-dialog';
 import { Field, TextInput, Toggle } from '@/components/admin/form-field';
 import { LoadingState } from '@/components/admin/loading';
 import { EmptyState } from '@/components/admin/empty-state';
+import { SearchBox } from '@/components/admin/search-box';
+import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { useToast } from '@/components/admin/toast';
 
 interface CategoryForm {
   name: string;
@@ -36,17 +39,23 @@ export default function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [form, setForm] = useState<CategoryForm>(emptyForm);
+  const [query, setQuery] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const { toast } = useToast();
 
   const load = useCallback(async () => {
     try {
       const res = await adminApi.categories.list();
       setCategories(res.categories);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load categories.');
+      const message = e instanceof Error ? e.message : 'Failed to load categories.';
+      setError(message);
+      toast('error', message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     void (async () => {
@@ -80,29 +89,46 @@ export default function CategoriesPage() {
       if (editing) await adminApi.categories.update(editing.id, payload);
       else await adminApi.categories.create(payload);
       setDialogOpen(false);
+      toast('success', editing ? 'Category updated.' : 'Category created.');
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to save category.');
+      const message = e instanceof Error ? e.message : 'Failed to save category.';
+      setError(message);
+      toast('error', message);
     } finally {
       setBusy(false);
     }
   };
 
-  const remove = async (c: Category) => {
-    if (!window.confirm(`Delete "${c.name}"? This cannot be undone.`)) return;
-    setError(null);
+  const requestDelete = (c: Category) => setDeleteTarget(c);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteBusy(true);
     try {
-      await adminApi.categories.remove(c.id);
+      await adminApi.categories.remove(deleteTarget.id);
+      setDeleteTarget(null);
+      toast('success', `Deleted "${deleteTarget.name}".`);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to delete category.');
+      toast('error', e instanceof Error ? e.message : 'Failed to delete category.');
+    } finally {
+      setDeleteBusy(false);
     }
   };
+
+  const trimmedQuery = query.trim().toLowerCase();
+  const visible = trimmedQuery
+    ? categories.filter(
+        (c) => c.name.toLowerCase().includes(trimmedQuery) || c.slug.toLowerCase().includes(trimmedQuery),
+      )
+    : categories;
 
   const columns: Column<Category>[] = [
     {
       key: 'name',
       header: 'Name',
+      sortValue: (c) => c.name,
       render: (c) => (
         <div className="flex items-center gap-2">
           {c.emoji && <span className="text-lg" aria-hidden="true">{c.emoji}</span>}
@@ -110,11 +136,12 @@ export default function CategoriesPage() {
         </div>
       ),
     },
-    { key: 'slug', header: 'Slug', render: (c) => <code className="text-xs text-zinc-500">{c.slug}</code>, hideOnMobile: true },
-    { key: 'sort', header: 'Order', render: (c) => c.sort_order, hideOnMobile: true },
+    { key: 'slug', header: 'Slug', sortValue: (c) => c.slug, render: (c) => <code className="text-xs text-zinc-500">{c.slug}</code>, hideOnMobile: true },
+    { key: 'sort', header: 'Order', sortValue: (c) => c.sort_order, render: (c) => c.sort_order, hideOnMobile: true },
     {
       key: 'status',
       header: 'Status',
+      sortValue: (c) => (c.is_active ? 1 : 0),
       render: (c) => (
         <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${c.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-500'}`}>
           {c.is_active ? 'Active' : 'Hidden'}
@@ -145,6 +172,12 @@ export default function CategoriesPage() {
         </div>
       )}
 
+      {!loading && categories.length > 0 && (
+        <div className="mb-4">
+          <SearchBox value={query} onChange={setQuery} placeholder="Search categories…" />
+        </div>
+      )}
+
       {loading ? (
         <LoadingState />
       ) : categories.length === 0 ? (
@@ -154,8 +187,16 @@ export default function CategoriesPage() {
           actionLabel="New category"
           onAction={openCreate}
         />
+      ) : visible.length === 0 ? (
+        <EmptyState
+          variant="search"
+          title="No matching categories"
+          description={`No categories match "${query.trim()}".`}
+          actionLabel="Clear search"
+          onAction={() => setQuery('')}
+        />
       ) : (
-        <DataTable columns={columns} rows={categories} rowKey={(c) => c.id} onEdit={openEdit} onDelete={remove} />
+        <DataTable columns={columns} rows={visible} rowKey={(c) => c.id} onEdit={openEdit} onDelete={requestDelete} />
       )}
 
       <CrudDialog
@@ -181,6 +222,15 @@ export default function CategoriesPage() {
         </Field>
         <Toggle id="cat-active" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} label="Visible on the menu" />
       </CrudDialog>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title={deleteTarget ? `Delete "${deleteTarget.name}"?` : 'Delete category?'}
+        description="This cannot be undone. The category will be removed from your menu."
+        busy={deleteBusy}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

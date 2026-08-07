@@ -52,6 +52,17 @@ export const adminApi = {
     update: (id: string, body: unknown) => request<{ offer: AdminOffer }>(`/api/admin/offers/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
     remove: (id: string) => request<{ ok: true }>(`/api/admin/offers/${id}`, { method: 'DELETE' }),
   },
+  upload: {
+    signed: (body: { bucket: 'product-images' | 'offer-images'; fileName: string; contentType: string; sizeBytes: number }) =>
+      request<SignedUpload>('/api/admin/upload', { method: 'POST', body: JSON.stringify(body) }),
+  },
 };
+
+export interface SignedUpload {
+  uploadUrl: string;
+  publicUrl: string;
+  path: string;
+  bucket: 'product-images' | 'offer-images';
+}
 
 export type { AdminProduct, AdminVariant, AdminOffer, Category };

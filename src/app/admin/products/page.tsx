@@ -5,8 +5,12 @@ import { adminApi, ApiClientError, type AdminProduct, type AdminOffer, type Cate
 import { DataTable, type Column } from '@/components/admin/data-table';
 import { CrudDialog } from '@/components/admin/crud-dialog';
 import { Field, TextInput, TextArea, Toggle } from '@/components/admin/form-field';
+import { ImageUpload } from '@/components/admin/image-upload';
 import { LoadingState } from '@/components/admin/loading';
 import { EmptyState } from '@/components/admin/empty-state';
+import { SearchBox } from '@/components/admin/search-box';
+import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { useToast } from '@/components/admin/toast';
 
 interface VariantForm {
   id?: string;
@@ -21,6 +25,7 @@ interface ProductForm {
   name: string;
   description: string;
   base_price: string;
+  image_url: string | null;
   is_veg: boolean;
   is_featured: boolean;
   stock_qty: string;
@@ -46,6 +51,7 @@ function emptyProductForm(categoryId: string): ProductForm {
     name: '',
     description: '',
     base_price: '',
+    image_url: null,
     is_veg: true,
     is_featured: false,
     stock_qty: '',
@@ -62,6 +68,7 @@ function toForm(p: AdminProduct, offers: AdminOffer[]): ProductForm {
     name: p.name,
     description: p.description ?? '',
     base_price: (p.base_price / 100).toFixed(2),
+    image_url: p.image_url,
     is_veg: p.is_veg ?? true,
     is_featured: p.is_featured,
     stock_qty: p.stock_qty === null ? '' : String(p.stock_qty),
@@ -123,6 +130,10 @@ export default function ProductsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const [form, setForm] = useState<ProductForm>(emptyProductForm(''));
+  const [query, setQuery] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const { toast } = useToast();
 
   const load = useCallback(async () => {
     try {
@@ -135,11 +146,13 @@ export default function ProductsPage() {
       setProducts(prodRes.products);
       setOffers(offerRes.offers);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load products.');
+      const message = e instanceof Error ? e.message : 'Failed to load products.';
+      setError(message);
+      toast('error', message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     void (async () => {
@@ -176,9 +189,12 @@ export default function ProductsPage() {
         setFormErrors(next);
       }
       setError(e.message);
+      toast('error', e.message);
       return;
     }
-    setError(e instanceof Error ? e.message : 'Failed to save product.');
+    const message = e instanceof Error ? e.message : 'Failed to save product.';
+    setError(message);
+    toast('error', message);
   };
 
   const syncOffers = async (productId: string) => {
@@ -217,6 +233,7 @@ export default function ProductsPage() {
         name: form.name.trim(),
         description: form.description.trim() || null,
         base_price: Math.round(Number(form.base_price) * 100),
+        image_url: form.image_url,
         is_veg: form.is_veg,
         is_featured: form.is_featured,
         stock_qty: form.stock_qty === '' ? null : Math.max(0, parseInt(form.stock_qty, 10) || 0),
@@ -238,6 +255,7 @@ export default function ProductsPage() {
         await syncOffers(created.product.id);
       }
       setDialogOpen(false);
+      toast('success', editing ? 'Product updated.' : 'Product created.');
       await load();
     } catch (e) {
       applyServerErrors(e);
@@ -246,16 +264,31 @@ export default function ProductsPage() {
     }
   };
 
-  const remove = async (p: AdminProduct) => {
-    if (!window.confirm(`Hide "${p.name}"? It will no longer appear on the menu.`)) return;
-    setError(null);
+  const requestDelete = (p: AdminProduct) => setDeleteTarget(p);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteBusy(true);
     try {
-      await adminApi.products.remove(p.id);
+      await adminApi.products.remove(deleteTarget.id);
+      setDeleteTarget(null);
+      toast('success', `"${deleteTarget.name}" hidden from the menu.`);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to hide product.');
+      toast('error', e instanceof Error ? e.message : 'Failed to hide product.');
+    } finally {
+      setDeleteBusy(false);
     }
   };
+
+  const trimmedQuery = query.trim().toLowerCase();
+  const visible = trimmedQuery
+    ? products.filter(
+        (p) =>
+          p.name.toLowerCase().includes(trimmedQuery) ||
+          categoryName(p.category_id).toLowerCase().includes(trimmedQuery),
+      )
+    : products;
 
   const updateVariant = (i: number, patch: Partial<VariantForm>) => {
     setForm((f) => ({
@@ -282,11 +315,33 @@ export default function ProductsPage() {
   };
 
   const columns: Column<AdminProduct>[] = [
-    { key: 'name', header: 'Name', render: (p) => <span className="font-medium text-zinc-900">{p.name}</span> },
-    { key: 'category', header: 'Category', render: (p) => categoryName(p.category_id), hideOnMobile: true },
+    {
+      key: 'name',
+      header: 'Name',
+      sortValue: (p) => p.name,
+      render: (p) => (
+        <div className="flex items-center gap-3">
+          {p.image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.image_url} alt="" className="size-9 shrink-0 rounded-lg object-cover" />
+          ) : (
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-300">
+              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <circle cx="9" cy="10" r="1.5" />
+                <path d="m5 18 5-5 3 3 2-2 4 4" />
+              </svg>
+            </span>
+          )}
+          <span className="font-medium text-zinc-900">{p.name}</span>
+        </div>
+      ),
+    },
+    { key: 'category', header: 'Category', sortValue: (p) => categoryName(p.category_id), render: (p) => categoryName(p.category_id), hideOnMobile: true },
     {
       key: 'price',
       header: 'Base price',
+      sortValue: (p) => p.base_price,
       render: (p) => (
         <span className="font-medium text-zinc-700">₹{(p.base_price / 100).toFixed(2)}</span>
       ),
@@ -295,12 +350,14 @@ export default function ProductsPage() {
     {
       key: 'variants',
       header: 'Variants',
+      sortValue: (p) => p.variants.length,
       render: (p) => <span className="text-xs text-zinc-500">{p.variants.length || '—'}</span>,
       hideOnMobile: true,
     },
     {
       key: 'status',
       header: 'Status',
+      sortValue: (p) => (p.is_active ? 1 : 0),
       render: (p) => (
         <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${p.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-500'}`}>
           {p.is_active ? 'Active' : 'Hidden'}
@@ -331,6 +388,12 @@ export default function ProductsPage() {
         </div>
       )}
 
+      {!loading && products.length > 0 && (
+        <div className="mb-4">
+          <SearchBox value={query} onChange={setQuery} placeholder="Search products…" />
+        </div>
+      )}
+
       {loading ? (
         <LoadingState />
       ) : products.length === 0 ? (
@@ -340,8 +403,16 @@ export default function ProductsPage() {
           actionLabel="New product"
           onAction={openCreate}
         />
+      ) : visible.length === 0 ? (
+        <EmptyState
+          variant="search"
+          title="No matching products"
+          description={`No products match "${query.trim()}".`}
+          actionLabel="Clear search"
+          onAction={() => setQuery('')}
+        />
       ) : (
-        <DataTable columns={columns} rows={products} rowKey={(p) => p.id} onEdit={openEdit} onDelete={remove} />
+        <DataTable columns={columns} rows={visible} rowKey={(p) => p.id} onEdit={openEdit} onDelete={requestDelete} />
       )}
 
       <CrudDialog
@@ -372,6 +443,12 @@ export default function ProductsPage() {
         <Field label="Description" htmlFor="prod-desc">
           <TextArea id="prod-desc" value={form.description} onChange={(v) => setForm({ ...form, description: v })} placeholder="Rich, creamy milk chocolate…" />
         </Field>
+        <ImageUpload
+          bucket="product-images"
+          value={form.image_url}
+          onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+          label="Product image"
+        />
         <Field label="Base price (₹)" htmlFor="prod-price" hint="Use decimal rupees, e.g. 149.50." error={formErrors.base_price}>
           <TextInput id="prod-price" type="number" value={form.base_price} onChange={(v) => setForm({ ...form, base_price: v })} placeholder="149.50" />
         </Field>
@@ -488,6 +565,16 @@ export default function ProductsPage() {
           )}
         </div>
       </CrudDialog>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title={deleteTarget ? `Hide "${deleteTarget.name}"?` : 'Hide product?'}
+        description="It will no longer appear on the menu."
+        confirmLabel="Hide"
+        busy={deleteBusy}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

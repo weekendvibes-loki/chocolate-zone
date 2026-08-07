@@ -31,8 +31,8 @@ function key(k: string): string {
   return `checkout:${k}`;
 }
 
-/** Increment-or-reject for a sliding window bucket. */
-function take(bucketKey: string, limit: number, windowMs: number): boolean {
+/** Increment-or-reject for a sliding window bucket. Shared by checkout (§10) and magic-link sends (AUTH §3.2). */
+export function take(bucketKey: string, limit: number, windowMs: number): boolean {
   const now = Date.now();
   const b = buckets.get(bucketKey);
   if (!b || now >= b.resetAt) {

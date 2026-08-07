@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { SignOutButton } from '@/components/admin/SignOutButton';
 
-export function Header({ onMenuClick }: { onMenuClick: () => void }) {
+export function Header({ onMenuClick, email }: { onMenuClick: () => void; email: string }) {
   return (
     <header className="flex h-16 shrink-0 items-center gap-4 border-b border-zinc-200 bg-white px-4 lg:px-6">
       <button
@@ -30,10 +31,11 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
       </Link>
 
       <div className="flex items-center gap-2">
+        <span className="hidden max-w-[14rem] truncate text-sm text-zinc-600 lg:block">{email}</span>
         <span className="grid size-8 place-items-center rounded-full bg-zinc-900 text-xs font-semibold text-white">
           A
         </span>
-        <span className="hidden text-sm font-medium text-zinc-700 md:block">Admin</span>
+        <SignOutButton />
       </div>
     </header>
   );
