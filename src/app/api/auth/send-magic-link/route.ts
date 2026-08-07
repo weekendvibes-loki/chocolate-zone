@@ -45,13 +45,20 @@ export async function POST(request: NextRequest) {
 
   const { supabase, applyCookies } = await createSessionServerClient();
 
-  await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: false,
       emailRedirectTo: `${APP_ORIGIN}${AUTH_CALLBACK_PATH}?next=${encodeURIComponent(safeRedirectPath(parsed.data.next))}`,
     },
   });
+
+  // Keep a 200 regardless of result (anti-enumeration). A logged error here
+  // means either the email has no Supabase Auth user (with shouldCreateUser:
+  // false Supabase drops the send silently) or email sending is misconfigured.
+  if (error) {
+    console.error('send-magic-link: signInWithOtp failed', error.message);
+  }
 
   const response = NextResponse.json({ data: { sent: true } });
   applyCookies(response);
