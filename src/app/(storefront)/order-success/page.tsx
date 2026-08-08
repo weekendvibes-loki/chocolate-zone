@@ -22,7 +22,7 @@ export default async function OrderSuccessPage() {
         </span>
         <h1 className="mt-5 text-2xl font-bold text-zinc-900">Thank you for your order!</h1>
         <p className="mt-2 text-sm leading-relaxed text-zinc-600">
-          Your order details have been sent to us on WhatsApp. We'll confirm availability and
+          Your order details have been sent to us on WhatsApp. We&apos;ll confirm availability and
           get back to you shortly. You can also reach us directly at any time.
         </p>
 

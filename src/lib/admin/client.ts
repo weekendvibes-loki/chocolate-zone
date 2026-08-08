@@ -1,4 +1,4 @@
-import type { Category } from '@/types/domain';
+import type { Category, ShopSettings } from '@/types/domain';
 import type { AdminProduct, AdminVariant } from '@/lib/services/adminProducts';
 import type { AdminOffer } from '@/lib/services/offers';
 import type { ApiEnvelope } from '@/types/domain';
@@ -52,6 +52,10 @@ export const adminApi = {
     update: (id: string, body: unknown) => request<{ offer: AdminOffer }>(`/api/admin/offers/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
     remove: (id: string) => request<{ ok: true }>(`/api/admin/offers/${id}`, { method: 'DELETE' }),
   },
+  settings: {
+    get: () => request<{ settings: ShopSettings }>('/api/admin/settings'),
+    update: (body: unknown) => request<{ settings: ShopSettings }>('/api/admin/settings', { method: 'PUT', body: JSON.stringify(body) }),
+  },
   upload: {
     signed: (body: { bucket: 'product-images' | 'offer-images'; fileName: string; contentType: string; sizeBytes: number }) =>
       request<SignedUpload>('/api/admin/upload', { method: 'POST', body: JSON.stringify(body) }),
@@ -65,4 +69,4 @@ export interface SignedUpload {
   bucket: 'product-images' | 'offer-images';
 }
 
-export type { AdminProduct, AdminVariant, AdminOffer, Category };
+export type { AdminProduct, AdminVariant, AdminOffer, Category, ShopSettings };

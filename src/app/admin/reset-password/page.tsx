@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient, type SupabaseBrowserClient } from '@/lib/supabase/client';
 
 type Status = 'recovering' | 'ready' | 'saving' | 'error';
@@ -10,6 +11,7 @@ const inputClass =
   'w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 pr-11 text-sm text-white placeholder:text-neutral-500 focus:border-neutral-600 focus:outline-none';
 
 export default function ResetPasswordPage() {
+  const router = useRouter();
   const [supabase, setSupabase] = useState<SupabaseBrowserClient | null>(null);
   const [status, setStatus] = useState<Status>('recovering');
   const [errorMessage, setErrorMessage] = useState('');
@@ -68,7 +70,7 @@ export default function ResetPasswordPage() {
       return;
     }
     await supabase.auth.signOut().catch(() => {});
-    window.location.href = '/admin/login?reset=success';
+    router.push('/admin/login?reset=success');
   }
 
   return (

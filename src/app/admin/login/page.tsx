@@ -5,9 +5,9 @@ export const metadata = { title: 'Admin sign in · Chocolate Zone' };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{ next?: string | string[]; reset?: string | string[] }>;
 }) {
-  const { next } = await searchParams;
+  const { next, reset } = await searchParams;
   const nextPath = typeof next === 'string' ? next : undefined;
 
   return (
@@ -17,7 +17,7 @@ export default async function LoginPage({
         <p className="mt-1 text-sm text-neutral-400">
           Sign in to the admin dashboard with your shop email.
         </p>
-        <LoginForm next={nextPath} />
+        <LoginForm next={nextPath} resetSuccess={reset === 'success'} />
       </div>
     </main>
   );

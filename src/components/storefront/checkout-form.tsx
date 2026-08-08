@@ -37,6 +37,9 @@ export function CheckoutForm({
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fallbackWaUrl, setFallbackWaUrl] = useState<string | null>(null);
+
+  const whatsAppAvailable = whatsappNumber.trim().length > 0;
 
   const errors = useMemo(() => {
     const nameResult = nameSchema.safeParse(name);
@@ -52,7 +55,12 @@ export function CheckoutForm({
   }, [address, fulfilment, name, note, phone]);
 
   const isValid =
-    items.length > 0 && !errors.name && !errors.phone && !errors.address && !errors.note;
+    items.length > 0 &&
+    whatsAppAvailable &&
+    !errors.name &&
+    !errors.phone &&
+    !errors.address &&
+    !errors.note;
 
   const blur = (field: string) => setTouched((prev) => ({ ...prev, [field]: true }));
 
@@ -61,6 +69,7 @@ export function CheckoutForm({
     if (!isValid) return;
     setSubmitted(true);
     setSubmitError(null);
+    setFallbackWaUrl(null);
 
     const { waUrl } = buildOrderMessage({
       brand,
@@ -75,13 +84,28 @@ export function CheckoutForm({
       currency,
     });
 
-    const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+    // The `noopener` window feature makes window.open() return null even on
+    // success (spec), so it cannot be used to detect a blocked popup. Open the
+    // URL directly in a new tab (still within the user gesture) and only treat
+    // a null return as a genuine block, falling back to a manual link.
+    let win: Window | null = null;
+    try {
+      win = window.open(waUrl, '_blank');
+    } catch {
+      win = null;
+    }
+
     if (!win) {
       setSubmitted(false);
-      setSubmitError(
-        'Could not open WhatsApp. Please allow pop-ups for this site, then try again. Your cart is still here.',
-      );
+      setSubmitError('Your browser blocked WhatsApp from opening automatically.');
+      setFallbackWaUrl(waUrl);
       return;
+    }
+
+    try {
+      win.opener = null;
+    } catch {
+      // Cross-origin windows may refuse the setter; the tab is still open.
     }
 
     clear();
@@ -103,6 +127,34 @@ export function CheckoutForm({
           >
             Continue Shopping
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!whatsAppAvailable) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-xl rounded-2xl border border-zinc-200 bg-white p-8 text-center">
+          <h1 className="text-2xl font-bold text-zinc-900">Checkout</h1>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-600">
+            WhatsApp ordering is temporarily unavailable. Your cart is safe — please
+            try again a little later or contact the store directly.
+          </p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/products"
+              className="inline-flex rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+            >
+              Continue Shopping
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900"
+            >
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -223,12 +275,23 @@ export function CheckoutForm({
               Place Order on WhatsApp
             </button>
             {submitError && (
-              <p role="alert" className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-600">
-                {submitError}
-              </p>
+              <div role="alert" className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-center">
+                <p className="text-xs font-medium text-red-600">{submitError}</p>
+                {fallbackWaUrl && (
+                  <a
+                    href={fallbackWaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100"
+                  >
+                    Open WhatsApp manually
+                  </a>
+                )}
+                <p className="mt-1.5 text-xs text-zinc-500">Your cart is still here.</p>
+              </div>
             )}
             <p className="mt-2 text-center text-xs text-zinc-500">
-              You'll be redirected to WhatsApp to confirm your order.
+              You&apos;ll be redirected to WhatsApp to confirm your order.
             </p>
           </div>
         </form>

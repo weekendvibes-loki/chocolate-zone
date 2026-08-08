@@ -152,6 +152,9 @@ export const shopSettingsInputSchema = z.object({
   announcement: z.string().trim().max(500).optional().nullable(),
 });
 
+// Partial update for the admin Shop Settings page: only provided fields change.
+export const shopSettingsUpdateSchema = shopSettingsInputSchema.partial();
+
 export const uploadRequestSchema = z.object({
   bucket: z.enum(['product-images', 'offer-images']),
   fileName: z.string().trim().min(1).max(255),

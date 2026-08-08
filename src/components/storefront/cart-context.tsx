@@ -70,19 +70,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as PersistedCart;
-        if (parsed && Array.isArray(parsed.items)) {
-          setItems(parsed.items);
-          if (typeof parsed.currency === 'string') setCurrency(parsed.currency);
+    let cancelled = false;
+    // Defer the restore out of the synchronous effect body: the initial render
+    // stays empty (matching the server), and only after hydration is the
+    // persisted cart applied. `hydrated` flips in the same deferred step, so
+    // the persistence effect never overwrites storage with the empty state.
+    queueMicrotask(() => {
+      if (cancelled) return;
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as PersistedCart;
+          if (parsed && Array.isArray(parsed.items)) {
+            setItems(parsed.items);
+            if (typeof parsed.currency === 'string') setCurrency(parsed.currency);
+          }
         }
+      } catch {
+        // Ignore malformed or unavailable storage.
       }
-    } catch {
-      // Ignore malformed or unavailable storage.
-    }
-    setHydrated(true);
+      setHydrated(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {

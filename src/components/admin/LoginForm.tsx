@@ -1,12 +1,18 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 
 const POST_LOGIN_PATH = '/admin';
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
-export function LoginForm({ next = POST_LOGIN_PATH }: { next?: string }) {
+export function LoginForm({
+  next = POST_LOGIN_PATH,
+  resetSuccess = false,
+}: {
+  next?: string;
+  resetSuccess?: boolean;
+}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -16,11 +22,6 @@ export function LoginForm({ next = POST_LOGIN_PATH }: { next?: string }) {
     email: false,
     password: false,
   });
-  const [resetSuccess, setResetSuccess] = useState(false);
-
-  useEffect(() => {
-    setResetSuccess(new URLSearchParams(window.location.search).get('reset') === 'success');
-  }, []);
 
   const emailError = !email.trim()
     ? 'Email is required.'
