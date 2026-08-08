@@ -22,15 +22,18 @@ export function ProductCard({
   offer,
   currency,
   hasVariants = false,
+  categoryName,
 }: {
   product: ProductCardProduct;
   offer: Offer | null;
   currency: string;
   hasVariants?: boolean;
+  categoryName?: string;
 }) {
   const { addItem } = useCart();
   const { toast } = useToast();
   const detailsHref = `/products/${product.id}`;
+  const outOfStock = product.stock_qty === 0;
 
   const handleAddToCart = () => {
     addItem({
@@ -47,11 +50,11 @@ export function ProductCard({
   };
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-xl">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-amber-300 hover:shadow-xl">
       <Link
         href={detailsHref}
         aria-label={product.name}
-        className="relative block aspect-[4/5] w-full overflow-hidden bg-[#f5ede1]"
+        className="relative block aspect-[4/5] w-full overflow-hidden bg-[#f5ede1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500"
       >
         {product.image_url ? (
           <Image
@@ -70,38 +73,46 @@ export function ProductCard({
           </span>
         )}
         {offer && (
-          <span className="absolute left-2 top-2 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-zinc-900">
+          <span className="absolute left-3 top-3 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-zinc-900 shadow-sm">
             {discountLabel(offer, currency)}
           </span>
         )}
       </Link>
-      <div className="flex flex-1 flex-col p-3">
-        <Link href={detailsHref} className="transition-colors group-hover:text-zinc-600">
-          <h3 className="truncate text-sm font-semibold text-zinc-900">{product.name}</h3>
+      <div className="flex flex-1 flex-col p-4">
+        {categoryName && (
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-amber-600">{categoryName}</span>
+        )}
+        <Link
+          href={detailsHref}
+          className="mt-1.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+        >
+          <h3 className="line-clamp-2 min-h-12 font-serif text-base font-semibold leading-snug text-zinc-900 transition-colors group-hover:text-zinc-600">
+            {product.name}
+          </h3>
         </Link>
-        <p className="mt-1 text-base font-bold text-zinc-900">
-          {formatMoney(toMinor(product.base_price), currency)}
-        </p>
-        <div className="mt-1">
+        <p className="mt-2 text-lg font-bold text-zinc-900">{formatMoney(toMinor(product.base_price), currency)}</p>
+        <div className="mt-1.5">
           <StockIndicator stock={product.stock_qty} />
         </div>
-        {hasVariants ? (
-          <Link
-            href={detailsHref}
-            className="mt-3 inline-flex items-center justify-center rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors group-hover:border-zinc-900 group-hover:bg-zinc-900 group-hover:text-white"
-          >
-            Customize & Add
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={product.stock_qty === 0}
-            className="mt-3 inline-flex items-center justify-center rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors group-hover:border-zinc-900 group-hover:bg-zinc-900 group-hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Add to Cart
-          </button>
-        )}
+        <div className="mt-4 flex flex-1 items-end">
+          {hasVariants ? (
+            <Link
+              href={detailsHref}
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            >
+              Customize & Add
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {outOfStock ? 'Out of stock' : 'Add to Cart'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

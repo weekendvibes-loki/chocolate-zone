@@ -38,6 +38,7 @@ export function ProductDetails({
   const { product, variants, category, bestOffer } = detail;
   const currency = catalog.shop.currency;
   const offersById = useMemo(() => new Map(catalog.offers.map((o) => [o.id, o])), [catalog.offers]);
+  const categoriesById = useMemo(() => new Map(catalog.categories.map((c) => [c.id, c])), [catalog.categories]);
   const { addItem, openCart } = useCart();
   const { toast } = useToast();
 
@@ -85,30 +86,37 @@ export function ProductDetails({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <nav className="mb-6 flex items-center gap-2 text-sm text-zinc-500" aria-label="Breadcrumb">
-        <Link href="/products" className="transition-colors hover:text-zinc-900">
-          Products
+      <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-zinc-500" aria-label="Breadcrumb">
+        <Link href="/" className="transition-colors hover:text-zinc-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+          Home
+        </Link>
+        <span aria-hidden="true" className="text-zinc-300">/</span>
+        <Link href="/products" className="transition-colors hover:text-zinc-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+          Shop
         </Link>
         {category && (
           <>
-            <span aria-hidden="true">/</span>
-            <Link href={`/products?category=${category.id}`} className="transition-colors hover:text-zinc-900">
+            <span aria-hidden="true" className="text-zinc-300">/</span>
+            <Link href={`/products?category=${category.id}`} className="transition-colors hover:text-zinc-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
               {category.name}
             </Link>
           </>
         )}
-        <span aria-hidden="true">/</span>
-        <span className="truncate font-medium text-zinc-900">{product.name}</span>
+        <span aria-hidden="true" className="text-zinc-300">/</span>
+        <span className="truncate font-medium text-zinc-900" aria-current="page">
+          {product.name}
+        </span>
       </nav>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div>
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+      <div className="grid gap-10 lg:grid-cols-2">
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-[#f5ede1] shadow-sm">
             {images.length > 0 ? (
               <Image
                 src={images[activeImage]}
                 alt={product.name}
                 fill
+                priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
@@ -120,6 +128,11 @@ export function ProductDetails({
                 </svg>
               </span>
             )}
+            {bestOffer && (
+              <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900 shadow-sm">
+                {discountLabel(bestOffer, currency)}
+              </span>
+            )}
           </div>
           {images.length > 1 && (
             <div className="mt-3 flex gap-2">
@@ -129,8 +142,9 @@ export function ProductDetails({
                   type="button"
                   onClick={() => setActiveImage(i)}
                   aria-label={`View image ${i + 1}`}
-                  className={`relative h-20 w-20 overflow-hidden rounded-lg border-2 bg-zinc-100 ${
-                    activeImage === i ? 'border-zinc-900' : 'border-transparent'
+                  aria-pressed={activeImage === i}
+                  className={`relative h-20 w-20 overflow-hidden rounded-lg border-2 bg-[#f5ede1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                    activeImage === i ? 'border-amber-500' : 'border-transparent'
                   }`}
                 >
                   <Image src={src} alt="" fill sizes="80px" className="object-cover" />
@@ -141,8 +155,12 @@ export function ProductDetails({
         </div>
 
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl">{product.name}</h1>
-          {category && <p className="mt-1 text-sm text-zinc-500">{category.name}</p>}
+          {category && (
+            <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">{category.name}</span>
+          )}
+          <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+            {product.name}
+          </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <span className="text-3xl font-bold text-zinc-900">{formatMoney(priceMinor, currency)}</span>
@@ -158,37 +176,38 @@ export function ProductDetails({
             </p>
           )}
 
-          <div className="mt-2">
+          <div className="mt-3">
             <StockIndicator stock={product.stock_qty} />
           </div>
 
           {product.description && (
-            <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-zinc-600">{product.description}</p>
+            <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-zinc-600">{product.description}</p>
           )}
 
           {groups.length > 0 && (
-            <div className="mt-6 space-y-5">
+            <div className="mt-7 space-y-6">
               {groups.map((g) => (
                 <fieldset key={g.name}>
                   <legend className="text-sm font-semibold text-zinc-900">{g.name}</legend>
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="mt-2.5 flex flex-wrap gap-2">
                     {g.options.map((v) => {
                       const delta = toMinor(v.price_delta);
+                      const isSelected = selected[g.name] === v.option;
                       return (
                         <button
                           key={v.id}
                           type="button"
                           onClick={() => setSelected((prev) => ({ ...prev, [g.name]: v.option }))}
-                          aria-pressed={selected[g.name] === v.option}
-                          className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                            selected[g.name] === v.option
-                              ? 'border-zinc-900 bg-zinc-900 text-white'
+                          aria-pressed={isSelected}
+                          className={`inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                            isSelected
+                              ? 'border-zinc-900 bg-zinc-900 text-white shadow-sm'
                               : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 hover:text-zinc-900'
                           }`}
                         >
                           {v.option}
                           {delta !== 0 && (
-                            <span className={selected[g.name] === v.option ? 'text-zinc-300' : 'text-zinc-500'}>
+                            <span className={isSelected ? 'text-zinc-300' : 'text-zinc-500'}>
                               {' '}
                               ({delta > 0 ? '+' : '-'}
                               {formatMoney(Math.abs(delta), currency)})
@@ -207,17 +226,24 @@ export function ProductDetails({
             type="button"
             onClick={handleAddToCart}
             disabled={outOfStock}
-            className="mt-8 inline-flex items-center justify-center rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-8 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
           >
+            <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
+              <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
+            </svg>
             {outOfStock ? 'Out of stock' : 'Add to Cart'}
           </button>
         </div>
       </div>
 
       {related.length > 0 && (
-        <section className="mt-14 border-t border-zinc-200 pt-8">
-          <h2 className="text-xl font-bold text-zinc-900">Related products</h2>
-          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <section className="mt-16 border-t border-zinc-200 pt-10">
+          <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">Keep exploring</span>
+          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+            You might also like
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {related.map((p) => {
               const offer = p.bestOfferId ? (offersById.get(p.bestOfferId) ?? null) : null;
               return (
@@ -227,6 +253,7 @@ export function ProductDetails({
                   offer={offer}
                   currency={currency}
                   hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
+                  categoryName={categoriesById.get(p.category_id)?.name}
                 />
               );
             })}

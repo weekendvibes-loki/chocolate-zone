@@ -9,23 +9,26 @@ import { LoadingState } from '@/components/admin/loading';
 import { EmptyState } from '@/components/admin/empty-state';
 import { SearchBox } from '@/components/admin/search-box';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { ImageUpload } from '@/components/admin/image-upload';
 import { useToast } from '@/components/admin/toast';
 
 interface CategoryForm {
   name: string;
   slug: string;
   emoji: string;
+  image_url: string | null;
   sort_order: string;
   is_active: boolean;
 }
 
-const emptyForm: CategoryForm = { name: '', slug: '', emoji: '', sort_order: '0', is_active: true };
+const emptyForm: CategoryForm = { name: '', slug: '', emoji: '', image_url: null, sort_order: '0', is_active: true };
 
 function toForm(c: Category): CategoryForm {
   return {
     name: c.name,
     slug: c.slug,
     emoji: c.emoji ?? '',
+    image_url: c.image_url,
     sort_order: String(c.sort_order),
     is_active: c.is_active,
   };
@@ -83,6 +86,7 @@ export default function CategoriesPage() {
         name: form.name.trim(),
         slug: form.slug.trim() || undefined,
         emoji: form.emoji.trim() || null,
+        image_url: form.image_url,
         sort_order: parseInt(form.sort_order, 10) || 0,
         is_active: form.is_active,
       };
@@ -130,8 +134,15 @@ export default function CategoriesPage() {
       header: 'Name',
       sortValue: (c) => c.name,
       render: (c) => (
-        <div className="flex items-center gap-2">
-          {c.emoji && <span className="text-lg" aria-hidden="true">{c.emoji}</span>}
+        <div className="flex items-center gap-2.5">
+          {c.image_url ? (
+            <span className="size-8 shrink-0 overflow-hidden rounded-md bg-zinc-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={c.image_url} alt="" className="size-full object-cover" />
+            </span>
+          ) : (
+            c.emoji && <span className="text-lg" aria-hidden="true">{c.emoji}</span>
+          )}
           <span className="font-medium text-zinc-900">{c.name}</span>
         </div>
       ),
@@ -214,9 +225,15 @@ export default function CategoriesPage() {
         <Field label="Slug" htmlFor="cat-slug" hint="Lowercase letters, numbers and hyphens. Leave blank to auto-generate.">
           <TextInput id="cat-slug" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} placeholder="chocolates" />
         </Field>
-        <Field label="Emoji" htmlFor="cat-emoji" hint="Shown next to the category on the menu.">
+        <Field label="Emoji" htmlFor="cat-emoji" hint="Shown next to the category when no image is set.">
           <TextInput id="cat-emoji" value={form.emoji} onChange={(v) => setForm({ ...form, emoji: v })} placeholder="🍫" />
         </Field>
+        <ImageUpload
+          bucket="product-images"
+          label="Category image"
+          value={form.image_url}
+          onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+        />
         <Field label="Sort order" htmlFor="cat-sort" hint="Lower numbers appear first.">
           <TextInput id="cat-sort" type="number" value={form.sort_order} onChange={(v) => setForm({ ...form, sort_order: v })} />
         </Field>
