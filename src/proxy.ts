@@ -15,6 +15,7 @@ import { DASHBOARD_PATH, LOGIN_PATH } from '@/lib/auth/constants';
 
 const ADMIN_PAGES = '/admin';
 const ADMIN_API = '/api/admin';
+const PUBLIC_AUTH_PATHS = ['/admin/forgot-password', '/admin/reset-password'];
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -46,6 +47,7 @@ export async function proxy(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const isLoginPage = pathname === LOGIN_PATH || pathname.startsWith(`${LOGIN_PATH}/`);
+    const isPublicAdminPath = isLoginPage || PUBLIC_AUTH_PATHS.includes(pathname);
 
     if (pathname.startsWith(ADMIN_API) && !user) {
       return NextResponse.json(
@@ -54,7 +56,7 @@ export async function proxy(request: NextRequest) {
       );
     }
 
-    if (pathname.startsWith(ADMIN_PAGES) && !isLoginPage && !user) {
+    if (pathname.startsWith(ADMIN_PAGES) && !isPublicAdminPath && !user) {
       const login = new URL(LOGIN_PATH, request.url);
       login.searchParams.set('next', pathname);
       return NextResponse.redirect(login);
