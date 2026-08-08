@@ -36,6 +36,7 @@ export function CheckoutForm({
   const [note, setNote] = useState('');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const errors = useMemo(() => {
     const nameResult = nameSchema.safeParse(name);
@@ -59,6 +60,7 @@ export function CheckoutForm({
     e.preventDefault();
     if (!isValid) return;
     setSubmitted(true);
+    setSubmitError(null);
 
     const { waUrl } = buildOrderMessage({
       brand,
@@ -73,7 +75,15 @@ export function CheckoutForm({
       currency,
     });
 
-    window.open(waUrl, '_blank', 'noopener,noreferrer');
+    const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+    if (!win) {
+      setSubmitted(false);
+      setSubmitError(
+        'Could not open WhatsApp. Please allow pop-ups for this site, then try again. Your cart is still here.',
+      );
+      return;
+    }
+
     clear();
     toast('success', 'Order sent to WhatsApp');
     router.push('/order-success');
@@ -212,6 +222,11 @@ export function CheckoutForm({
             >
               Place Order on WhatsApp
             </button>
+            {submitError && (
+              <p role="alert" className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-600">
+                {submitError}
+              </p>
+            )}
             <p className="mt-2 text-center text-xs text-zinc-500">
               You'll be redirected to WhatsApp to confirm your order.
             </p>

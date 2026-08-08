@@ -23,7 +23,15 @@ export function FeaturedProducts({ catalog }: { catalog: Catalog }) {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {featured.map((p) => {
               const offer = p.bestOfferId ? (offersById.get(p.bestOfferId) ?? null) : null;
-              return <ProductCard key={p.id} product={p} offer={offer} currency={currency} />;
+              return (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  offer={offer}
+                  currency={currency}
+                  hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
+                />
+              );
             })}
           </div>
         )}

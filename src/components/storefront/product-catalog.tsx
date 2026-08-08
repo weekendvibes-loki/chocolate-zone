@@ -104,6 +104,7 @@ export function ProductCatalog({
               product={p}
               offer={p.bestOfferId ? offersById.get(p.bestOfferId) ?? null : null}
               currency={currency}
+              hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
             />
           ))}
         </div>

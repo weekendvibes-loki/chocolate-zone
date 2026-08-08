@@ -220,7 +220,15 @@ export function ProductDetails({
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {related.map((p) => {
               const offer = p.bestOfferId ? (offersById.get(p.bestOfferId) ?? null) : null;
-              return <ProductCard key={p.id} product={p} offer={offer} currency={currency} />;
+              return (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  offer={offer}
+                  currency={currency}
+                  hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
+                />
+              );
             })}
           </div>
         </section>
