@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { formatMoney } from '@/lib/pricing/money';
 import { EmptyState } from '@/components/admin/empty-state';
 import { useCart } from '@/components/storefront/cart-context';
 
 export function CartDrawer() {
   const { items, currency, summary, isOpen, closeCart, updateQuantity, removeItem } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -142,7 +144,16 @@ export function CartDrawer() {
                   <span>{formatMoney(summary.total, c)}</span>
                 </div>
               </div>
-              <p className="mt-3 text-center text-xs text-zinc-400">Checkout will be available soon.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  closeCart();
+                  router.push('/checkout');
+                }}
+                className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+              >
+                Proceed to Checkout · {formatMoney(summary.total, c)}
+              </button>
             </div>
           </>
         )}
