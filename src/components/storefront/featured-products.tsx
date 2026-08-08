@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { EmptyState } from '@/components/admin/empty-state';
 import { ProductCard } from '@/components/storefront/product-card';
 import type { Catalog } from '@/types/domain';
@@ -10,17 +11,32 @@ export function FeaturedProducts({ catalog }: { catalog: Catalog }) {
   const featured = selectFeatured(catalog.products, FEATURED_LIMIT);
 
   return (
-    <section id="featured" className="border-t border-zinc-200 bg-zinc-50">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-zinc-900">Featured products</h2>
-          <p className="mt-1 text-sm text-zinc-500">Our most-loved chocolates, ready to order.</p>
+    <section id="featured" className="border-y border-zinc-200 bg-[#faf5ec]">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
+              Handpicked
+            </span>
+            <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+              Featured chocolates
+            </h2>
+            <p className="mt-3 max-w-lg text-sm leading-6 text-zinc-600">
+              Our most-loved chocolates, ready to order.
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="text-sm font-medium text-amber-700 transition-colors hover:text-amber-900"
+          >
+            Shop all →
+          </Link>
         </div>
 
         {featured.length === 0 ? (
           <EmptyState title="No products yet" description="Fresh chocolates are being prepared." />
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
             {featured.map((p) => {
               const offer = p.bestOfferId ? (offersById.get(p.bestOfferId) ?? null) : null;
               return (

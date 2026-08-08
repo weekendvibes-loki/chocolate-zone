@@ -47,11 +47,11 @@ export function ProductCard({
   };
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all hover:-translate-y-1 hover:shadow-lg">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-xl">
       <Link
         href={detailsHref}
         aria-label={product.name}
-        className="relative block aspect-[4/3] w-full overflow-hidden bg-zinc-100"
+        className="relative block aspect-[4/5] w-full overflow-hidden bg-[#f5ede1]"
       >
         {product.image_url ? (
           <Image
@@ -79,7 +79,7 @@ export function ProductCard({
         <Link href={detailsHref} className="transition-colors group-hover:text-zinc-600">
           <h3 className="truncate text-sm font-semibold text-zinc-900">{product.name}</h3>
         </Link>
-        <p className="mt-1 text-sm font-medium text-zinc-700">
+        <p className="mt-1 text-base font-bold text-zinc-900">
           {formatMoney(toMinor(product.base_price), currency)}
         </p>
         <div className="mt-1">

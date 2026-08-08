@@ -8,26 +8,26 @@ const socialLinks = [
 
 export function StorefrontFooter() {
   return (
-    <footer id="contact" className="border-t border-zinc-200 bg-zinc-50">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
+    <footer id="contact" className="border-t border-[#1f1510] bg-[#241a15]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="grid size-8 place-items-center rounded-lg bg-zinc-900 text-amber-400">
-              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <span className="grid size-9 place-items-center rounded-xl bg-amber-400 text-zinc-900">
+              <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="M3 10h18M3 14h18M8 5v4M16 5v4" strokeLinecap="round" />
               </svg>
             </span>
-            <span className="text-base font-bold text-zinc-900">Chocolate Zone</span>
+            <span className="font-serif text-lg font-semibold text-white">Chocolate Zone</span>
           </div>
-          <p className="mt-3 max-w-xs text-sm leading-6 text-zinc-500">
+          <p className="mt-4 max-w-xs text-sm leading-6 text-zinc-400">
             Handcrafted chocolates made fresh every day with premium cocoa and real ingredients.
           </p>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">Contact</h3>
-          <ul className="mt-3 space-y-2 text-sm text-zinc-600">
+          <h3 className="text-sm font-semibold uppercase tracking-widest text-amber-400">Contact</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-zinc-300">
             <li>Phone / WhatsApp: +91 98765 43210</li>
             <li>Email: hello@chocolatezone.in</li>
             <li>Address: 123 Cocoa Lane, Indiranagar, Bengaluru 560038</li>
@@ -35,8 +35,8 @@ export function StorefrontFooter() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">Store timings</h3>
-          <ul className="mt-3 space-y-2 text-sm text-zinc-600">
+          <h3 className="text-sm font-semibold uppercase tracking-widest text-amber-400">Store timings</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-zinc-300">
             <li className="flex justify-between gap-4">
               <span>Mon – Fri</span>
               <span>10:00 AM – 9:30 PM</span>
@@ -46,13 +46,13 @@ export function StorefrontFooter() {
               <span>10:00 AM – 10:00 PM</span>
             </li>
           </ul>
-          <div className="mt-5 flex items-center gap-3">
+          <div className="mt-6 flex items-center gap-3">
             {socialLinks.map((s) => (
               <Link
                 key={s.label}
                 href={s.href}
                 aria-label={s.label}
-                className="grid size-9 place-items-center rounded-full border border-zinc-300 text-zinc-500 transition-colors hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
+                className="grid size-10 place-items-center rounded-full border border-zinc-700 text-zinc-400 transition-colors hover:border-amber-400 hover:bg-amber-400 hover:text-zinc-900"
               >
                 {socialIcon(s.label)}
               </Link>
@@ -60,7 +60,7 @@ export function StorefrontFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-zinc-200 py-5 text-center text-xs text-zinc-500">
+      <div className="border-t border-white/10 py-5 text-center text-xs text-zinc-500">
         © {new Date().getFullYear()} Chocolate Zone. All rights reserved.
       </div>
     </footer>

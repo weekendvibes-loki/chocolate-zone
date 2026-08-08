@@ -12,14 +12,16 @@ type SortKey = 'default' | 'name' | 'price-asc' | 'price-desc';
 export function ProductCatalog({
   catalog,
   initialCategory,
+  initialQuery,
 }: {
   catalog: Catalog;
   initialCategory?: string;
+  initialQuery?: string;
 }) {
   const offersById = useMemo(() => new Map(catalog.offers.map((o) => [o.id, o])), [catalog.offers]);
   const currency = catalog.shop.currency;
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery ?? '');
   const [categoryId, setCategoryId] = useState<string>(
     initialCategory && catalog.categories.some((c) => c.id === initialCategory) ? initialCategory : 'all',
   );
