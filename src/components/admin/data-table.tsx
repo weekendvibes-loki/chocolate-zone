@@ -49,17 +49,17 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
   };
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+    <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white shadow-sm">
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead>
-          <tr className="border-b border-zinc-200 bg-zinc-50">
+          <tr className="border-b border-zinc-200 bg-[#fbf7f0]">
             {columns.map((col) => (
-              <th key={col.key} className="px-4 py-3 font-medium text-zinc-500">
+              <th key={col.key} className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
                 {col.sortValue ? (
                   <button
                     type="button"
                     onClick={() => toggleSort(col)}
-                    className={`inline-flex items-center gap-1 transition-colors hover:text-zinc-900 ${
+                    className={`inline-flex items-center gap-1 rounded transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                       sortKey === col.key ? 'text-zinc-900' : ''
                     }`}
                   >
@@ -82,12 +82,16 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
                 )}
               </th>
             ))}
-            {(onEdit || onDelete) && <th className="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>}
+            {(onEdit || onDelete) && (
+              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-100">
           {sorted.map((row) => (
-            <tr key={rowKey(row)} className="transition-colors hover:bg-zinc-50">
+            <tr key={rowKey(row)} className="transition-colors hover:bg-[#fbf7f0]/60">
               {columns.map((col) => (
                 <td key={col.key} className={`px-4 py-3 text-zinc-700 ${col.className ?? ''}`}>
                   {col.render(row)}
@@ -100,7 +104,7 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
                       <button
                         type="button"
                         onClick={() => onEdit(row)}
-                        className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+                        className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-zinc-600 transition-colors hover:bg-amber-50 hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
                       >
                         Edit
                       </button>
@@ -109,7 +113,7 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
                       <button
                         type="button"
                         onClick={() => onDelete(row)}
-                        className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
+                        className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
                       >
                         Delete
                       </button>

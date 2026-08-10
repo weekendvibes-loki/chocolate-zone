@@ -11,29 +11,33 @@ export function AdminShell({ children, email }: { children: React.ReactNode; ema
 
   return (
     <ToastProvider>
-      <div className="min-h-full bg-zinc-50">
+      <div className="min-h-full bg-[#faf7f2]">
         <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:block lg:w-64">
-          <Sidebar />
+          <Sidebar email={email} />
         </div>
 
-        {menuOpen && (
-          <div className="fixed inset-0 z-40 lg:hidden">
-            <div
-              className="absolute inset-0 bg-zinc-900/50"
-              onClick={() => setMenuOpen(false)}
-              aria-hidden="true"
-            />
-            <div className="absolute inset-y-0 left-0 w-64 shadow-xl">
-              <Sidebar onNavigate={() => setMenuOpen(false)} />
-            </div>
+        <div
+          className={`fixed inset-0 z-40 lg:hidden ${menuOpen ? '' : 'pointer-events-none'}`}
+          aria-hidden={!menuOpen}
+        >
+          <div
+            className={`absolute inset-0 bg-zinc-900/60 transition-opacity duration-300 ${
+              menuOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={() => setMenuOpen(false)}
+          />
+          <div
+            className={`absolute inset-y-0 left-0 w-72 max-w-[85vw] shadow-2xl transition-transform duration-300 ${
+              menuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            <Sidebar email={email} onNavigate={() => setMenuOpen(false)} />
           </div>
-        )}
+        </div>
 
         <div className="lg:pl-64">
-          <div className="sticky top-0 z-20">
-            <Header onMenuClick={() => setMenuOpen(true)} email={email} />
-          </div>
-          <main className="px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+          <Header onMenuClick={() => setMenuOpen(true)} />
+          <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
         </div>
       </div>
       <GlobalLoadingBar />
