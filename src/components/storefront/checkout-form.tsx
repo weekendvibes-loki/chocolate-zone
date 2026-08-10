@@ -17,10 +17,14 @@ const labelClass = 'mb-1.5 block text-sm font-medium text-zinc-700';
 
 export function CheckoutForm({
   whatsappNumber,
+  whatsappOrderingEnabled,
+  deliveryEnabled,
   currency,
   brand,
 }: {
   whatsappNumber: string;
+  whatsappOrderingEnabled: boolean;
+  deliveryEnabled: boolean;
   currency: string;
   brand: string;
 }) {
@@ -38,7 +42,9 @@ export function CheckoutForm({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [fallbackWaUrl, setFallbackWaUrl] = useState<string | null>(null);
 
-  const whatsAppAvailable = whatsappNumber.trim().length > 0;
+  const deliveryAvailable = deliveryEnabled;
+  const activeFulfilment: Fulfilment = deliveryAvailable ? fulfilment : 'pickup';
+  const whatsAppAvailable = whatsappOrderingEnabled && whatsappNumber.trim().length > 0;
 
   const errors = useMemo(() => {
     const nameResult = nameSchema.safeParse(name);
@@ -48,10 +54,12 @@ export function CheckoutForm({
       name: nameResult.success ? undefined : nameResult.error.issues[0]?.message,
       phone: phoneResult.success ? undefined : phoneResult.error.issues[0]?.message,
       address:
-        fulfilment === 'delivery' && !address.trim() ? 'Delivery address is required.' : undefined,
+        activeFulfilment === 'delivery' && !address.trim()
+          ? 'Delivery address is required.'
+          : undefined,
       note: noteResult.success ? undefined : noteResult.error.issues[0]?.message,
     };
-  }, [address, fulfilment, name, note, phone]);
+  }, [address, activeFulfilment, name, note, phone]);
 
   const isValid =
     items.length > 0 &&
@@ -75,7 +83,7 @@ export function CheckoutForm({
       whatsappNumber,
       name: name.trim(),
       phone: phone.trim(),
-      fulfilment,
+      fulfilment: activeFulfilment,
       address: address.trim(),
       note: note.trim(),
       items,
@@ -232,71 +240,73 @@ export function CheckoutForm({
           <CheckoutSection number={2} title="Delivery method" hint="How would you like to receive your order?">
             <fieldset>
               <div className="grid gap-3 sm:grid-cols-2">
-                {(['pickup', 'delivery'] as Fulfilment[]).map((f) => {
-                  const selected = fulfilment === f;
-                  return (
-                    <label
-                      key={f}
-                      className={`flex min-h-14 cursor-pointer items-start gap-3 rounded-xl border-2 p-4 transition-colors focus-within:ring-2 focus-within:ring-amber-500 ${
-                        selected
-                          ? 'border-amber-500 bg-amber-50/70'
-                          : 'border-zinc-200 bg-white hover:border-zinc-300'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="fulfilment"
-                        value={f}
-                        checked={selected}
-                        onChange={() => setFulfilment(f)}
-                        className="sr-only"
-                      />
-                      <span
-                        className={`grid size-9 shrink-0 place-items-center rounded-lg transition-colors ${
-                          selected ? 'bg-amber-400 text-zinc-900' : 'bg-zinc-100 text-zinc-500'
-                        }`}
-                        aria-hidden="true"
-                      >
-                        {f === 'pickup' ? (
-                          <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                            <path d="M4 9 5.5 4h9L16 9" strokeLinejoin="round" />
-                            <path d="M3 9h14v11H3z" strokeLinejoin="round" />
-                            <path d="M8 20v-5h4v5" strokeLinejoin="round" />
-                          </svg>
-                        ) : (
-                          <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                            <path d="M2.5 5.5h10v10h-10z" strokeLinejoin="round" />
-                            <path d="M12.5 9h4l3 3v3.5h-7z" strokeLinejoin="round" />
-                            <circle cx="6.5" cy="18.5" r="1.8" />
-                            <circle cx="16" cy="18.5" r="1.8" />
-                          </svg>
-                        )}
-                      </span>
-                      <span className="flex-1">
-                        <span className="block text-sm font-semibold text-zinc-900">
-                          {f === 'pickup' ? 'Pickup' : 'Home Delivery'}
-                        </span>
-                        <span className="mt-0.5 block text-xs text-zinc-500">
-                          {f === 'pickup' ? 'Collect at the store' : "We'll deliver to your door"}
-                        </span>
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className={`mt-1 grid size-5 shrink-0 place-items-center rounded-full border-2 transition-colors ${
-                          selected ? 'border-amber-500 bg-amber-400 text-zinc-900' : 'border-zinc-300 text-transparent'
+                {(['pickup', 'delivery'] as Fulfilment[])
+                  .filter((f) => (f === 'delivery' ? deliveryAvailable : true))
+                  .map((f) => {
+                    const selected = activeFulfilment === f;
+                    return (
+                      <label
+                        key={f}
+                        className={`flex min-h-14 cursor-pointer items-start gap-3 rounded-xl border-2 p-4 transition-colors focus-within:ring-2 focus-within:ring-amber-500 ${
+                          selected
+                            ? 'border-amber-500 bg-amber-50/70'
+                            : 'border-zinc-200 bg-white hover:border-zinc-300'
                         }`}
                       >
-                        <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                    </label>
-                  );
-                })}
+                        <input
+                          type="radio"
+                          name="fulfilment"
+                          value={f}
+                          checked={selected}
+                          onChange={() => setFulfilment(f)}
+                          className="sr-only"
+                        />
+                        <span
+                          className={`grid size-9 shrink-0 place-items-center rounded-lg transition-colors ${
+                            selected ? 'bg-amber-400 text-zinc-900' : 'bg-zinc-100 text-zinc-500'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {f === 'pickup' ? (
+                            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                              <path d="M4 9 5.5 4h9L16 9" strokeLinejoin="round" />
+                              <path d="M3 9h14v11H3z" strokeLinejoin="round" />
+                              <path d="M8 20v-5h4v5" strokeLinejoin="round" />
+                            </svg>
+                          ) : (
+                            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                              <path d="M2.5 5.5h10v10h-10z" strokeLinejoin="round" />
+                              <path d="M12.5 9h4l3 3v3.5h-7z" strokeLinejoin="round" />
+                              <circle cx="6.5" cy="18.5" r="1.8" />
+                              <circle cx="16" cy="18.5" r="1.8" />
+                            </svg>
+                          )}
+                        </span>
+                        <span className="flex-1">
+                          <span className="block text-sm font-semibold text-zinc-900">
+                            {f === 'pickup' ? 'Pickup' : 'Home Delivery'}
+                          </span>
+                          <span className="mt-0.5 block text-xs text-zinc-500">
+                            {f === 'pickup' ? 'Collect at the store' : "We'll deliver to your door"}
+                          </span>
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className={`mt-1 grid size-5 shrink-0 place-items-center rounded-full border-2 transition-colors ${
+                            selected ? 'border-amber-500 bg-amber-400 text-zinc-900' : 'border-zinc-300 text-transparent'
+                          }`}
+                        >
+                          <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
+                      </label>
+                    );
+                  })}
               </div>
             </fieldset>
 
-            {fulfilment === 'delivery' && (
+            {activeFulfilment === 'delivery' && (
               <div>
                 <label htmlFor="checkout-address" className={labelClass}>
                   Delivery Address <span className="text-red-500">*</span>

@@ -269,6 +269,7 @@ export type Database = {
           timings: Json
           updated_at: string
           whatsapp_number: string
+          whatsapp_ordering_enabled: boolean
         }
         Insert: {
           address?: string | null
@@ -288,6 +289,7 @@ export type Database = {
           timings?: Json
           updated_at?: string
           whatsapp_number: string
+          whatsapp_ordering_enabled?: boolean
         }
         Update: {
           address?: string | null
@@ -307,6 +309,7 @@ export type Database = {
           timings?: Json
           updated_at?: string
           whatsapp_number?: string
+          whatsapp_ordering_enabled?: boolean
         }
         Relationships: []
       }

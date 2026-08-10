@@ -48,6 +48,9 @@ export async function updateShopSettings(
       ...(input.pickup_enabled !== undefined ? { pickup_enabled: input.pickup_enabled } : {}),
       ...(input.is_open !== undefined ? { is_open: input.is_open } : {}),
       ...(input.ordering_enabled !== undefined ? { ordering_enabled: input.ordering_enabled } : {}),
+      ...(input.whatsapp_ordering_enabled !== undefined
+        ? { whatsapp_ordering_enabled: input.whatsapp_ordering_enabled }
+        : {}),
       ...(input.announcement !== undefined ? { announcement: input.announcement } : {}),
     })
     .eq('id', id)

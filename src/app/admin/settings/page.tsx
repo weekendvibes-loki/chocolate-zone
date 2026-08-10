@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { adminApi } from '@/lib/admin/client';
 import { shopSettingsInputSchema } from '@/lib/validation/schemas';
-import { Field, TextInput } from '@/components/admin/form-field';
+import { Field, TextInput, Toggle } from '@/components/admin/form-field';
 import { LoadingState } from '@/components/admin/loading';
 import { useToast } from '@/components/admin/toast';
 
 export default function SettingsPage() {
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [whatsappOrderingEnabled, setWhatsappOrderingEnabled] = useState(true);
+  const [deliveryEnabled, setDeliveryEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +22,8 @@ export default function SettingsPage() {
     try {
       const { settings } = await adminApi.settings.get();
       setWhatsappNumber(settings.whatsapp_number ?? '');
+      setWhatsappOrderingEnabled(settings.whatsapp_ordering_enabled);
+      setDeliveryEnabled(settings.delivery_enabled);
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Failed to load shop settings.';
       setError(message);
@@ -41,14 +45,20 @@ export default function SettingsPage() {
   };
 
   const save = async () => {
-    const err = validate(whatsappNumber);
-    setFieldError(err);
-    setTouched(true);
-    if (err) return;
+    if (whatsappOrderingEnabled) {
+      const err = validate(whatsappNumber);
+      setFieldError(err);
+      setTouched(true);
+      if (err) return;
+    }
     setBusy(true);
     setError(null);
     try {
-      await adminApi.settings.update({ whatsapp_number: whatsappNumber.trim() });
+      await adminApi.settings.update({
+        whatsapp_number: whatsappNumber.trim(),
+        whatsapp_ordering_enabled: whatsappOrderingEnabled,
+        delivery_enabled: deliveryEnabled,
+      });
       toast('success', 'Shop settings saved.');
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Failed to save shop settings.';
@@ -90,25 +100,58 @@ export default function SettingsPage() {
           void save();
         }}
       >
-        <div className="max-w-md">
-          <Field
-            label="WhatsApp / Order Receiving Number"
-            htmlFor="settings-whatsapp"
-            error={touched ? (fieldError ?? undefined) : undefined}
-            hint="Orders from checkout will be sent to this WhatsApp number."
-          >
-            <TextInput
-              id="settings-whatsapp"
-              type="tel"
-              value={whatsappNumber}
+        <div className="space-y-6">
+          <div className="max-w-md">
+            <Field
+              label="WhatsApp / Order Receiving Number"
+              htmlFor="settings-whatsapp"
+              error={touched ? (fieldError ?? undefined) : undefined}
+              hint="Orders from checkout will be sent to this WhatsApp number."
+            >
+              <TextInput
+                id="settings-whatsapp"
+                type="tel"
+                value={whatsappNumber}
+                onChange={(v) => {
+                  setWhatsappNumber(v);
+                  if (touched) setFieldError(validate(v));
+                }}
+                placeholder="e.g. 919876543210"
+                disabled={busy}
+              />
+            </Field>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Toggle
+              id="settings-whatsapp-ordering"
+              checked={whatsappOrderingEnabled}
               onChange={(v) => {
-                setWhatsappNumber(v);
-                if (touched) setFieldError(validate(v));
+                setWhatsappOrderingEnabled(v);
+                if (v && touched) setFieldError(validate(whatsappNumber));
               }}
-              placeholder="e.g. 919876543210"
-              disabled={busy}
+              label="WhatsApp ordering"
             />
-          </Field>
+            <Toggle
+              id="settings-delivery-enabled"
+              checked={deliveryEnabled}
+              onChange={setDeliveryEnabled}
+              label="Home delivery"
+            />
+          </div>
+
+          {!whatsappOrderingEnabled && (
+            <p className="text-sm text-zinc-500">
+              WhatsApp ordering is off. Customers will see an &ldquo;unavailable&rdquo; message at
+              checkout and their cart will be preserved. The number above is kept for when you turn
+              it back on.
+            </p>
+          )}
+          {!deliveryEnabled && (
+            <p className="text-sm text-zinc-500">
+              Home delivery is off. Customers will only be able to choose pickup at checkout.
+            </p>
+          )}
         </div>
 
         <div className="mt-6 flex items-center gap-3">

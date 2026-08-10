@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { discountLabel } from '@/components/storefront/offer-label';
 import type { Catalog, Offer } from '@/types/domain';
-
 function formatDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
@@ -17,18 +16,8 @@ function validityLabel(o: Offer): string | null {
   return null;
 }
 
-function offerCta(o: Offer, catalog: Catalog): string {
-  if (o.applies_to_all) return '/products';
-  if (o.offerProductIds.length > 0) {
-    const categoryIds = new Set(
-      catalog.products.filter((p) => o.offerProductIds.includes(p.id)).map((p) => p.category_id),
-    );
-    if (categoryIds.size === 1) {
-      const cid = [...categoryIds][0];
-      if (cid && catalog.categories.some((c) => c.id === cid)) return `/products?category=${cid}`;
-    }
-  }
-  return '/products';
+function offerCta(o: Offer): string {
+  return `/products?offer=${encodeURIComponent(o.id)}`;
 }
 
 export function OffersPage({ catalog }: { catalog: Catalog }) {
@@ -53,7 +42,7 @@ export function OffersPage({ catalog }: { catalog: Catalog }) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {offers.map((offer) => {
             const validity = validityLabel(offer);
-            const cta = offerCta(offer, catalog);
+            const cta = offerCta(offer);
             return (
               <Link
                 key={offer.id}

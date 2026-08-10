@@ -1,4 +1,5 @@
 import { LoginForm } from '@/components/admin/LoginForm';
+import { safeRedirectPath } from '@/lib/auth/safe-redirect';
 
 export const metadata = { title: 'Admin sign in · Chocolate Zone' };
 
@@ -8,7 +9,7 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string | string[]; reset?: string | string[] }>;
 }) {
   const { next, reset } = await searchParams;
-  const nextPath = typeof next === 'string' ? next : undefined;
+  const nextPath = typeof next === 'string' ? safeRedirectPath(next) : undefined;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-950 px-4">

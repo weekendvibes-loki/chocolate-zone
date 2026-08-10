@@ -39,6 +39,7 @@ export function mapShopSettings(row: ShopRow): ShopSettings {
     pickup_enabled: row.pickup_enabled,
     is_open: row.is_open,
     ordering_enabled: row.ordering_enabled,
+    whatsapp_ordering_enabled: row.whatsapp_ordering_enabled,
     announcement: row.announcement,
     created_at: row.created_at,
     updated_at: row.updated_at,

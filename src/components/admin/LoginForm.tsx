@@ -4,7 +4,14 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 
 const POST_LOGIN_PATH = '/admin';
+const ADMIN_PATH = /^\/admin(?:\/[a-z0-9-]+)*\/?$/;
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
+
+function isSafeAdminPath(value: string): boolean {
+  if (value === '/admin/login' || value.startsWith('/admin/login/')) return false;
+  if (value === '/auth/callback' || value.startsWith('/auth/callback/')) return false;
+  return ADMIN_PATH.test(value);
+}
 
 export function LoginForm({
   next = POST_LOGIN_PATH,
@@ -44,7 +51,7 @@ export function LoginForm({
         body: JSON.stringify({ email: email.trim(), password }),
       });
       if (res.ok) {
-        window.location.href = next;
+        window.location.href = isSafeAdminPath(next) ? next : POST_LOGIN_PATH;
         return;
       }
       const body = await res.json().catch(() => null);

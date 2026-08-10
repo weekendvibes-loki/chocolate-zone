@@ -149,6 +149,7 @@ export const shopSettingsInputSchema = z.object({
   pickup_enabled: z.boolean().optional(),
   is_open: z.boolean().optional(),
   ordering_enabled: z.boolean().optional(),
+  whatsapp_ordering_enabled: z.boolean().optional(),
   announcement: z.string().trim().max(500).optional().nullable(),
 });
 

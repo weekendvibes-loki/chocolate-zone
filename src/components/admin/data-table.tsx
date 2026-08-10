@@ -54,7 +54,12 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
         <thead>
           <tr className="border-b border-zinc-200 bg-[#fbf7f0]">
             {columns.map((col) => (
-              <th key={col.key} className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              <th
+                key={col.key}
+                className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500 ${
+                  col.hideOnMobile ? 'hidden sm:table-cell' : ''
+                }`}
+              >
                 {col.sortValue ? (
                   <button
                     type="button"
@@ -93,7 +98,12 @@ export function DataTable<T>({ columns, rows, rowKey, onEdit, onDelete }: DataTa
           {sorted.map((row) => (
             <tr key={rowKey(row)} className="transition-colors hover:bg-[#fbf7f0]/60">
               {columns.map((col) => (
-                <td key={col.key} className={`px-4 py-3 text-zinc-700 ${col.className ?? ''}`}>
+                <td
+                  key={col.key}
+                  className={`px-4 py-3 text-zinc-700 ${col.className ?? ''} ${
+                    col.hideOnMobile ? 'hidden sm:table-cell' : ''
+                  }`}
+                >
                   {col.render(row)}
                 </td>
               ))}

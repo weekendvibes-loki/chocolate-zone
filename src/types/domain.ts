@@ -47,6 +47,7 @@ export interface ShopSettings {
   pickup_enabled: boolean;
   is_open: boolean;
   ordering_enabled: boolean;
+  whatsapp_ordering_enabled: boolean;
   announcement: string | null;
   created_at: string;
   updated_at: string;

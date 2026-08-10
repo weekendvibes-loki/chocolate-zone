@@ -34,7 +34,7 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
               Shop Chocolates
             </Link>
             <Link
-              href="#featured"
+              href="/offers"
               className="rounded-xl border border-zinc-300 bg-white px-7 py-3.5 text-sm font-semibold text-zinc-700 transition-colors hover:border-amber-400 hover:text-amber-700"
             >
               Explore Offers
@@ -45,7 +45,7 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
         <div className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
           {offer ? (
             <Link
-              href="#featured"
+              href={`/products?offer=${encodeURIComponent(offer.id)}`}
               className="group relative block aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl ring-1 ring-zinc-900/10 transition-shadow hover:shadow-2xl lg:aspect-[5/6]"
             >
               {offer.image_url ? (

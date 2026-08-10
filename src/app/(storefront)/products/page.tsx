@@ -6,7 +6,7 @@ import type { Catalog } from '@/types/domain';
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; search?: string | string[] }>;
+  searchParams: Promise<{ category?: string; search?: string | string[]; offer?: string | string[] }>;
 }) {
   let catalog: Catalog | null = null;
   try {
@@ -26,8 +26,16 @@ export default async function ProductsPage({
     );
   }
 
-  const { category, search } = await searchParams;
+  const { category, search, offer } = await searchParams;
   const initialQuery = typeof search === 'string' ? search : undefined;
+  const initialOfferId = typeof offer === 'string' ? offer : undefined;
 
-  return <ProductCatalog catalog={catalog} initialCategory={category} initialQuery={initialQuery} />;
+  return (
+    <ProductCatalog
+      catalog={catalog}
+      initialCategory={category}
+      initialQuery={initialQuery}
+      initialOfferId={initialOfferId}
+    />
+  );
 }

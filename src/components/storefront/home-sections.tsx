@@ -1,62 +1,12 @@
 // Homepage-only presentational sections (server components).
-// Data-driven only: featured offer, brand/experience, final CTA.
+// Data-driven only: featured offer carousel, brand/experience, final CTA.
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { discountLabel } from '@/components/storefront/offer-label';
+import { OffersCarousel } from '@/components/storefront/offers-carousel';
 import type { Catalog } from '@/types/domain';
 
 export function FeaturedOfferSection({ catalog }: { catalog: Catalog }) {
-  const currency = catalog.shop.currency;
-  const offer = catalog.offers.find((o) => o.image_url) ?? catalog.offers[0] ?? null;
-  if (!offer) return null;
-
-  return (
-    <section className="bg-[#2a1d17]">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-16">
-        <div className="order-2 lg:order-1">
-          <span className="inline-flex items-center rounded-full border border-amber-400/30 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-300">
-            Limited offer
-          </span>
-          <h2 className="mt-4 font-serif text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            {offer.title}
-          </h2>
-          <div className="mt-4 inline-flex rounded-xl bg-amber-400 px-3.5 py-1.5 text-sm font-bold text-zinc-900">
-            {discountLabel(offer, currency)}
-          </div>
-          {offer.description && (
-            <p className="mt-5 max-w-md text-sm leading-7 text-zinc-300">{offer.description}</p>
-          )}
-          <Link
-            href="/products"
-            className="mt-8 inline-flex items-center justify-center rounded-xl bg-amber-400 px-7 py-3 text-sm font-semibold text-zinc-900 transition-all hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-lg"
-          >
-            Shop the offer
-          </Link>
-        </div>
-
-        <div className="order-1 lg:order-2">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl ring-1 ring-white/10 shadow-2xl">
-            {offer.image_url ? (
-              <Image
-                src={offer.image_url}
-                alt={offer.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-amber-400/10">
-                <span className="px-6 text-center font-serif text-xl font-semibold text-amber-300">
-                  {offer.title}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <OffersCarousel offers={catalog.offers} currency={catalog.shop.currency} />;
 }
 
 const brandFeatures = [
