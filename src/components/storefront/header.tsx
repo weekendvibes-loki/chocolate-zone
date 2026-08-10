@@ -13,6 +13,9 @@ const navLinks = [
   { href: '#contact', label: 'Contact' },
 ];
 
+const iconButton =
+  'group relative grid size-11 place-items-center rounded-xl text-[#cbb8a3] transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400/30 hover:bg-amber-400/10 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 active:translate-y-0 active:scale-95 sm:size-10';
+
 export function StorefrontHeader() {
   const { summary, openCart } = useCart();
   const router = useRouter();
@@ -60,40 +63,58 @@ export function StorefrontHeader() {
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
     if (href === '/products') return pathname === '/products' || pathname.startsWith('/products/');
+    if (href === '/offers') return pathname === '/offers';
     return false;
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-[#fbf7f0]/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
-        <Link href="/" className="group flex shrink-0 items-center gap-2.5">
-          <span className="grid size-9 place-items-center rounded-xl bg-zinc-900 text-amber-400 shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5 group-focus-visible:ring-2 group-focus-visible:ring-amber-400/60 group-focus-visible:outline-none">
-            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="M3 10h18M3 14h18M8 5v4M16 5v4" strokeLinecap="round" />
+    <header className="sticky top-0 z-40 bg-[#241a15]/95 text-[#f3e7d3] shadow-[0_10px_40px_-12px_rgba(0,0,0,0.55)] backdrop-blur">
+      <div aria-hidden="true" className="h-[3px] w-full bg-gradient-to-r from-[#241a15] via-amber-400/80 to-[#241a15]" />
+      <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:h-20">
+        <Link
+          href="/"
+          className="group flex shrink-0 items-center gap-2.5 justify-self-start rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 sm:gap-3"
+        >
+          <span className="relative grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#3a2418] to-[#1c120c] ring-1 ring-amber-400/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_0_22px_rgba(251,191,36,0.28)] group-hover:ring-amber-400/80">
+            <svg
+              className="size-5 text-amber-400 transition-transform duration-300 group-hover:scale-110"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              aria-hidden="true"
+            >
+              <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
+              <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
+              <path d="M9.5 13.5h5M9.5 16h5" strokeLinecap="round" />
             </svg>
           </span>
-          <span className="hidden font-serif text-lg font-semibold tracking-tight text-zinc-900 sm:block">
-            Chocolate Zone
+          <span className="flex flex-col justify-center leading-none">
+            <span className="font-serif text-[1.05rem] font-semibold tracking-tight text-[#f3e7d3] transition-colors duration-200 group-hover:text-white sm:text-xl">
+              Chocolate Zone
+            </span>
+            <span className="mt-1 hidden text-[0.55rem] font-semibold uppercase tracking-[0.34em] text-amber-400/90 sm:block">
+              Artisan Chocolatier
+            </span>
           </span>
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-7 md:flex" aria-label="Main navigation">
+        <nav className="hidden items-center justify-center gap-7 lg:flex" aria-label="Main navigation">
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
               <Link
                 key={link.label}
                 href={link.href}
-                className={`relative py-1.5 text-sm font-medium transition-colors focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${
-                  active ? 'text-zinc-900' : 'text-zinc-600 hover:text-zinc-900'
+                className={`group relative py-2 text-[0.8rem] font-semibold uppercase tracking-[0.16em] transition-colors duration-200 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${
+                  active ? 'text-amber-300' : 'text-[#cbb8a3] hover:text-[#f3e7d3]'
                 }`}
               >
                 {link.label}
                 <span
                   aria-hidden="true"
-                  className={`absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-amber-500 transition-transform duration-200 ${
-                    active ? 'scale-x-100' : 'scale-x-0 hover:scale-x-100'
+                  className={`absolute inset-x-0 -bottom-[3px] h-[2px] origin-left rounded-full bg-gradient-to-r from-amber-500 to-amber-300 transition-transform duration-300 ease-out ${
+                    active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                   }`}
                 />
               </Link>
@@ -101,7 +122,7 @@ export function StorefrontHeader() {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="flex items-center justify-end gap-1 sm:gap-1.5">
           <div className="relative" ref={searchPanelRef}>
             <button
               type="button"
@@ -109,7 +130,7 @@ export function StorefrontHeader() {
               aria-label="Search"
               aria-expanded={searchOpen}
               aria-controls="header-search-input"
-              className="group grid size-11 place-items-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 sm:size-9"
+              className={iconButton}
             >
               <svg
                 className="size-5 transition-transform duration-200 group-hover:scale-110"
@@ -131,10 +152,10 @@ export function StorefrontHeader() {
             </button>
 
             {searchOpen && (
-              <div className="absolute right-0 top-11 z-50 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] rounded-xl border border-zinc-200 bg-white p-2 shadow-lg">
+              <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] rounded-2xl border border-[#3a2a20] bg-[#1f1510] p-2 shadow-2xl">
                 <form onSubmit={applySearch} className="relative">
                   <svg
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400"
+                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#8a7468]"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -151,7 +172,7 @@ export function StorefrontHeader() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search products…"
-                    className="w-full rounded-lg border border-zinc-300 bg-white py-2 pl-9 pr-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                    className="w-full rounded-xl border border-[#3a2a20] bg-[#241a15] py-2.5 pl-9 pr-9 text-sm text-[#f3e7d3] placeholder:text-[#7d6a5b] focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/30"
                   />
                   {searchTerm && (
                     <button
@@ -161,7 +182,7 @@ export function StorefrontHeader() {
                         searchInputRef.current?.focus();
                       }}
                       aria-label="Clear search"
-                      className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
+                      className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-[#8a7468] transition-colors hover:bg-[#3a2a20] hover:text-[#f3e7d3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
                     >
                       <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                         <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -177,16 +198,23 @@ export function StorefrontHeader() {
             type="button"
             onClick={openCart}
             aria-label="Open cart"
-            className="relative grid size-11 place-items-center rounded-lg text-zinc-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 sm:size-9"
+            className={iconButton}
           >
-            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <svg
+              className="size-5 transition-transform duration-200 group-hover:scale-110"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              aria-hidden="true"
+            >
               <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
               <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
             </svg>
             {summary.itemCount > 0 && (
               <span
                 key={summary.itemCount}
-                className="absolute -right-0.5 -top-0.5 grid size-4 min-w-4 animate-[header-pop_0.25s_ease-out] place-items-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white"
+                className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[header-pop_0.25s_ease-out] place-items-center rounded-full bg-amber-400 px-1 text-[0.65rem] font-bold text-[#241a15] ring-2 ring-[#241a15]"
               >
                 {summary.itemCount > 99 ? '99+' : summary.itemCount}
               </span>
@@ -199,51 +227,67 @@ export function StorefrontHeader() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
-            className="grid size-11 place-items-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 sm:size-9 md:hidden"
+            className={`${iconButton} lg:hidden`}
           >
-            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              {menuOpen ? (
-                <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
-              ) : (
-                <path d="M3.75 7h16.5M3.75 12h16.5M3.75 17h16.5" strokeLinecap="round" />
-              )}
-            </svg>
+            <span className="relative block h-3.5 w-5" aria-hidden="true">
+              <span
+                className={`absolute left-0 top-0 h-[2px] w-full rounded-full bg-current transition-all duration-300 ${
+                  menuOpen ? 'top-1.5 rotate-45' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-1.5 h-[2px] w-full rounded-full bg-current transition-all duration-300 ${
+                  menuOpen ? 'opacity-0' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-3 h-[2px] w-full rounded-full bg-current transition-all duration-300 ${
+                  menuOpen ? 'top-1.5 -rotate-45' : ''
+                }`}
+              />
+            </span>
           </button>
         </div>
       </div>
 
       {menuOpen && (
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <button
             type="button"
             aria-label="Close menu"
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-x-0 bottom-0 top-16 z-40 w-full animate-[header-fade-in_0.2s_ease-out] cursor-default bg-zinc-900/40"
+            className="fixed inset-x-0 bottom-0 top-16 z-40 w-full animate-[header-fade-in_0.2s_ease-out] cursor-default bg-[#120b08]/60 backdrop-blur-sm"
           />
           <nav
             id="mobile-menu"
             aria-label="Mobile navigation"
-            className="absolute inset-x-0 top-16 z-50 animate-[header-slide-down_0.2s_ease-out] border-t border-zinc-200 bg-white/95 px-3 py-3 shadow-lg backdrop-blur"
+            className="absolute inset-x-0 top-16 z-50 animate-[header-slide-down_0.25s_ease-out] border-t border-[#3a2a20]/70 bg-[#241a15]/95 px-4 pb-5 pt-2 shadow-2xl backdrop-blur"
           >
-            <div className="space-y-1">
-              {navLinks.map((link) => {
+            <ul className="divide-y divide-[#3a2a20]/50">
+              {navLinks.map((link, i) => {
                 const active = isActive(link.href);
                 return (
-                  <Link
+                  <li
                     key={link.label}
-                    href={link.href}
-                    onClick={() => setMenuOpen(false)}
-                    className={`block rounded-lg px-4 py-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${
-                      active
-                        ? 'bg-amber-50 text-zinc-900'
-                        : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-                    }`}
+                    className="animate-[menu-item-rise_0.3s_ease-out_both]"
+                    style={{ animationDelay: `${i * 45}ms` }}
                   >
-                    {link.label}
-                  </Link>
+                    <Link
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={`flex min-h-12 items-center gap-3 px-2 text-[0.85rem] font-semibold uppercase tracking-[0.16em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 ${
+                        active ? 'text-amber-300' : 'text-[#cbb8a3] hover:text-white'
+                      }`}
+                    >
+                      {active && (
+                        <span className="size-1.5 shrink-0 rounded-full bg-amber-400" aria-hidden="true" />
+                      )}
+                      {link.label}
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </nav>
         </div>
       )}

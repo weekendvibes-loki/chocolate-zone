@@ -122,7 +122,7 @@ export function OffersCarousel({
                 aria-roledescription="slide"
                 aria-label={`Offer ${i + 1} of ${count}`}
                 aria-hidden={i !== active}
-                className="w-full min-w-0 shrink-0"
+                className="w-full min-w-full shrink-0"
               >
                 <CarouselSlide offer={offer} currency={currency} />
               </div>
