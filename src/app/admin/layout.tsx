@@ -1,6 +1,5 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { AdminShell } from '@/components/admin/shell';
 import { getAdminUser } from '@/lib/auth/session';
 import { LOGIN_PATH } from '@/lib/auth/constants';
 
@@ -12,16 +11,16 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const isLoginPage = pathname === LOGIN_PATH || pathname.startsWith(`${LOGIN_PATH}/`);
   const isPublicAdminPath = isLoginPage || PUBLIC_AUTH_PATHS.includes(pathname);
 
-  const user = await getAdminUser();
-
   if (isPublicAdminPath) {
     return <>{children}</>;
   }
+
+  const user = await getAdminUser();
 
   if (!user) {
     const query = pathname ? `?next=${encodeURIComponent(pathname)}` : '';
     redirect(`${LOGIN_PATH}${query}`);
   }
 
-  return <AdminShell email={user.email}>{children}</AdminShell>;
+  return <>{children}</>;
 }

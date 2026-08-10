@@ -48,6 +48,8 @@ export interface ShopSettings {
   is_open: boolean;
   ordering_enabled: boolean;
   whatsapp_ordering_enabled: boolean;
+  contact_phone: string | null;
+  contact_email: string | null;
   announcement: string | null;
   created_at: string;
   updated_at: string;

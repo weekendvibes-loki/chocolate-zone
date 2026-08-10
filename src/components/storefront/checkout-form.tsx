@@ -18,12 +18,14 @@ const labelClass = 'mb-1.5 block text-sm font-medium text-zinc-700';
 export function CheckoutForm({
   whatsappNumber,
   whatsappOrderingEnabled,
+  orderingEnabled,
   deliveryEnabled,
   currency,
   brand,
 }: {
   whatsappNumber: string;
   whatsappOrderingEnabled: boolean;
+  orderingEnabled: boolean;
   deliveryEnabled: boolean;
   currency: string;
   brand: string;
@@ -45,6 +47,7 @@ export function CheckoutForm({
   const deliveryAvailable = deliveryEnabled;
   const activeFulfilment: Fulfilment = deliveryAvailable ? fulfilment : 'pickup';
   const whatsAppAvailable = whatsappOrderingEnabled && whatsappNumber.trim().length > 0;
+  const orderingAvailable = orderingEnabled && whatsAppAvailable;
 
   const errors = useMemo(() => {
     const nameResult = nameSchema.safeParse(name);
@@ -63,7 +66,7 @@ export function CheckoutForm({
 
   const isValid =
     items.length > 0 &&
-    whatsAppAvailable &&
+    orderingAvailable &&
     !errors.name &&
     !errors.phone &&
     !errors.address &&
@@ -140,6 +143,37 @@ export function CheckoutForm({
           >
             Shop Now
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!orderingEnabled) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-xl rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
+          <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">Checkout</span>
+          <h1 className="mt-2 font-serif text-2xl font-semibold text-zinc-900 sm:text-3xl">
+            We&apos;re not taking orders right now
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-600">
+            Orders are currently paused. Your cart is safe and waiting — please check back a little
+            later.
+          </p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/products"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-zinc-900 px-5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            >
+              Continue Shopping
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl border border-zinc-300 px-5 text-sm font-semibold text-zinc-700 transition-colors hover:border-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            >
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 import { getCatalog } from '@/lib/services/catalog';
 import { EmptyState } from '@/components/admin/empty-state';
 import { OffersPage } from '@/components/storefront/offers-page';
+import { OrdersClosedBanner } from '@/components/storefront/orders-closed-banner';
 import type { Catalog } from '@/types/domain';
 
 export default async function OffersRoute() {
@@ -22,5 +23,10 @@ export default async function OffersRoute() {
     );
   }
 
-  return <OffersPage catalog={catalog} />;
+  return (
+    <>
+      {!catalog.shop.ordering_enabled && <OrdersClosedBanner />}
+      <OffersPage catalog={catalog} />
+    </>
+  );
 }

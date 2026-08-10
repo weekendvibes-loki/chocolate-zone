@@ -142,6 +142,8 @@ export const shopSettingsInputSchema = z.object({
     .trim()
     .regex(/^\d{7,15}$/, 'WhatsApp number must be 7-15 digits.'), // E.164 without '+'
   address: z.string().trim().max(500).optional().nullable(),
+  contact_phone: z.string().trim().max(40).optional().nullable(),
+  contact_email: z.string().trim().email('Enter a valid email address.').max(120).optional().nullable(),
   timings: z.array(z.record(z.string(), z.unknown())).max(100).optional().nullable(),
   delivery_fee: z.number().int().min(0).max(1_000_000).optional(), // minor units
   free_delivery_threshold: z.number().int().min(0).max(100_000_000).optional().nullable(),

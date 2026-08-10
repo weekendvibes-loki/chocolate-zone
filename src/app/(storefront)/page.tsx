@@ -4,6 +4,7 @@ import { HeroBanner } from '@/components/storefront/hero-banner';
 import { CategorySection } from '@/components/storefront/category-section';
 import { FeaturedProducts } from '@/components/storefront/featured-products';
 import { BrandSection, FeaturedOfferSection, FinalCta } from '@/components/storefront/home-sections';
+import { OrdersClosedBanner } from '@/components/storefront/orders-closed-banner';
 import type { Catalog } from '@/types/domain';
 
 export default async function HomePage() {
@@ -27,6 +28,7 @@ export default async function HomePage() {
 
   return (
     <div>
+      {!catalog.shop.ordering_enabled && <OrdersClosedBanner />}
       <HeroBanner catalog={catalog} />
       <CategorySection categories={catalog.categories} />
       <FeaturedProducts catalog={catalog} />

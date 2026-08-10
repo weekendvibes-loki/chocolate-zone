@@ -37,6 +37,8 @@ export async function updateShopSettings(
       ...(input.currency !== undefined ? { currency: input.currency } : {}),
       ...(input.whatsapp_number !== undefined ? { whatsapp_number: input.whatsapp_number } : {}),
       ...(input.address !== undefined ? { address: input.address } : {}),
+      ...(input.contact_phone !== undefined ? { contact_phone: input.contact_phone } : {}),
+      ...(input.contact_email !== undefined ? { contact_email: input.contact_email } : {}),
       ...(input.timings !== undefined
         ? { timings: input.timings === null ? null : (input.timings as unknown as Json) }
         : {}),

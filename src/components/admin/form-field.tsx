@@ -101,7 +101,7 @@ export function Toggle({
         <input
           id={id}
           type="checkbox"
-          checked={checked}
+          checked={checked === true}
           onChange={(e) => onChange(e.target.checked)}
           className="peer sr-only"
         />

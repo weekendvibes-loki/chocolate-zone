@@ -255,6 +255,8 @@ export type Database = {
           address: string | null
           announcement: string | null
           brand: string
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
           currency: string
           delivery_enabled: boolean
@@ -275,6 +277,8 @@ export type Database = {
           address?: string | null
           announcement?: string | null
           brand: string
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           currency?: string
           delivery_enabled?: boolean
@@ -295,6 +299,8 @@ export type Database = {
           address?: string | null
           announcement?: string | null
           brand?: string
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           currency?: string
           delivery_enabled?: boolean

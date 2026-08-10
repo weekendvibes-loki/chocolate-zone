@@ -26,6 +26,7 @@ export default async function CheckoutPage() {
     <CheckoutForm
       whatsappNumber={catalog.shop.whatsapp_number}
       whatsappOrderingEnabled={catalog.shop.whatsapp_ordering_enabled}
+      orderingEnabled={catalog.shop.ordering_enabled}
       deliveryEnabled={catalog.shop.delivery_enabled}
       currency={catalog.shop.currency}
       brand={catalog.shop.brand}

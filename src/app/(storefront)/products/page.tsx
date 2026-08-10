@@ -1,6 +1,7 @@
 import { getCatalog } from '@/lib/services/catalog';
 import { EmptyState } from '@/components/admin/empty-state';
 import { ProductCatalog } from '@/components/storefront/product-catalog';
+import { OrdersClosedBanner } from '@/components/storefront/orders-closed-banner';
 import type { Catalog } from '@/types/domain';
 
 export default async function ProductsPage({
@@ -31,11 +32,14 @@ export default async function ProductsPage({
   const initialOfferId = typeof offer === 'string' ? offer : undefined;
 
   return (
-    <ProductCatalog
-      catalog={catalog}
-      initialCategory={category}
-      initialQuery={initialQuery}
-      initialOfferId={initialOfferId}
-    />
+    <>
+      {!catalog.shop.ordering_enabled && <OrdersClosedBanner />}
+      <ProductCatalog
+        catalog={catalog}
+        initialCategory={category}
+        initialQuery={initialQuery}
+        initialOfferId={initialOfferId}
+      />
+    </>
   );
 }

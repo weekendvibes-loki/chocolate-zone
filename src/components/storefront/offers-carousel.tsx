@@ -106,9 +106,9 @@ export function OffersCarousel({
           </div>
         )}
 
-        <div className="relative overflow-hidden">
+        <div className="relative w-full overflow-hidden">
           <div
-            className="flex transition-transform duration-700 ease-out"
+            className="flex w-full transition-transform duration-700 ease-out"
             style={{
               transform: `translateX(-${active * 100}%)`,
               transitionDuration: reduceMotion ? '0ms' : undefined,
@@ -122,7 +122,7 @@ export function OffersCarousel({
                 aria-roledescription="slide"
                 aria-label={`Offer ${i + 1} of ${count}`}
                 aria-hidden={i !== active}
-                className="w-full shrink-0"
+                className="w-full min-w-0 shrink-0"
               >
                 <CarouselSlide offer={offer} currency={currency} />
               </div>
