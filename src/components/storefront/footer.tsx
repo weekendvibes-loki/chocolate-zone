@@ -88,11 +88,11 @@ export async function StorefrontFooter() {
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden border-t border-[#B3703D]/40 bg-gradient-to-b from-[#311A10] via-[#2A1710] to-[#1E100B]"
+      className="relative overflow-hidden border-t border-[#B3703D]/50 bg-gradient-to-b from-[#4E2F1D] via-[#3A2417] to-[#2A1710]"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(65%_100%_at_50%_0%,rgba(179,112,61,0.22),transparent_72%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(65%_100%_at_50%_0%,rgba(179,112,61,0.26),transparent_72%)]"
       />
       <div
         aria-hidden="true"

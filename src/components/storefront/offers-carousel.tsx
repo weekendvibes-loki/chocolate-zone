@@ -180,18 +180,44 @@ function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) 
       <div className="order-1 min-w-0 lg:order-2">
         <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden rounded-3xl ring-1 ring-[#F2B84B]/15 shadow-2xl">
           {offer.image_url ? (
-            <Image
-              src={offer.image_url}
-              alt={offer.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
+            <>
+              <Image
+                src={offer.image_url}
+                alt={offer.title}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1E100B]/35 via-transparent to-transparent"
+              />
+            </>
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[#B3703D]/15">
-              <span className="max-w-full break-words px-6 text-center font-serif text-xl font-semibold text-[#E7D5C1]">
+            <div className="relative flex h-full w-full flex-col items-center justify-center gap-5 bg-gradient-to-br from-[#311A10] via-[#2A1710] to-[#1E100B] px-8 text-center">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_80%_at_50%_0%,rgba(179,112,61,0.28),transparent_70%)]"
+              />
+              <svg
+                aria-hidden="true"
+                className="relative size-14 text-[#F2B84B]"
+                viewBox="0 0 800 600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <ellipse cx={400} cy={275} rx={225} ry={210} />
+                <ellipse cx={400} cy={275} rx={225} ry={210} transform="rotate(60 400 275)" opacity={0.6} />
+                <ellipse cx={400} cy={275} rx={225} ry={210} transform="rotate(120 400 275)" opacity={0.35} />
+              </svg>
+              <span className="relative max-w-full break-words font-serif text-2xl font-semibold leading-snug text-[#FFF7EA] sm:text-3xl">
                 {offer.title}
               </span>
+              <span
+                aria-hidden="true"
+                className="relative h-px w-12 bg-gradient-to-r from-transparent via-[#F2B84B]/70 to-transparent"
+              />
             </div>
           )}
         </div>

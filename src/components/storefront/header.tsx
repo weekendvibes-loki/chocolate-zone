@@ -102,11 +102,11 @@ export function StorefrontHeader() {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="relative animate-[header-enter_0.6s_ease-out] shadow-[0_16px_36px_-18px_rgba(0,0,0,0.65)]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#311A10] via-[#2A1710] to-[#1E100B]" />
+      <div className="relative animate-[header-enter_0.6s_ease-out] border-b border-[#B3703D]/60 shadow-[0_16px_36px_-18px_rgba(0,0,0,0.65)]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#46291A] via-[#332015] to-[#201109]" />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(75%_170%_at_38%_0%,rgba(179,112,61,0.34),transparent_62%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(75%_170%_at_38%_0%,rgba(179,112,61,0.42),transparent_62%)]"
         />
         <div
           aria-hidden="true"
