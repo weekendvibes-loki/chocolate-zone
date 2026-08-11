@@ -76,7 +76,7 @@ export function OffersCarousel({
   };
 
   return (
-    <section className="bg-[#2a1d17]">
+    <section className="overflow-hidden bg-[#2a1d17]">
       <div
         ref={regionRef}
         className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6"
@@ -122,7 +122,7 @@ export function OffersCarousel({
                 aria-roledescription="slide"
                 aria-label={`Offer ${i + 1} of ${count}`}
                 aria-hidden={i !== active}
-                className="w-full min-w-full shrink-0"
+                className="w-full basis-full shrink-0 min-w-0"
               >
                 <CarouselSlide offer={offer} currency={currency} />
               </div>
@@ -153,15 +153,15 @@ export function OffersCarousel({
 
 function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) {
   return (
-    <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-      <div className="order-2 lg:order-1">
+    <div className="grid w-full min-w-0 items-center gap-8 lg:grid-cols-2 lg:gap-16">
+      <div className="order-2 min-w-0 lg:order-1">
         <span className="inline-flex items-center rounded-full border border-amber-400/30 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-300">
           Limited offer
         </span>
-        <h2 className="mt-4 font-serif text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+        <h2 className="mt-4 max-w-full break-words font-serif text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
           {offer.title}
         </h2>
-        <div className="mt-4 inline-flex rounded-xl bg-amber-400 px-3.5 py-1.5 text-sm font-bold text-zinc-900">
+        <div className="mt-4 inline-flex max-w-full rounded-xl bg-amber-400 px-3.5 py-1.5 text-sm font-bold text-zinc-900">
           {discountLabel(offer, currency)}
         </div>
         {offer.description && (
@@ -169,14 +169,14 @@ function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) 
         )}
         <Link
           href={`/products?offer=${encodeURIComponent(offer.id)}`}
-          className="mt-8 inline-flex items-center justify-center rounded-xl bg-amber-400 px-7 py-3 text-sm font-semibold text-zinc-900 transition-all hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-lg"
+          className="mt-8 inline-flex max-w-full items-center justify-center rounded-xl bg-amber-400 px-7 py-3 text-sm font-semibold text-zinc-900 transition-all hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-lg"
         >
           Shop the offer
         </Link>
       </div>
 
-      <div className="order-1 lg:order-2">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl ring-1 ring-white/10 shadow-2xl">
+      <div className="order-1 min-w-0 lg:order-2">
+        <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden rounded-3xl ring-1 ring-white/10 shadow-2xl">
           {offer.image_url ? (
             <Image
               src={offer.image_url}
@@ -187,7 +187,7 @@ function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) 
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-amber-400/10">
-              <span className="px-6 text-center font-serif text-xl font-semibold text-amber-300">
+              <span className="max-w-full break-words px-6 text-center font-serif text-xl font-semibold text-amber-300">
                 {offer.title}
               </span>
             </div>
