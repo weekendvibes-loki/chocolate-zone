@@ -111,15 +111,8 @@ export function OffersCarousel({
           </div>
         )}
 
-        <div className="relative w-full overflow-hidden">
-          <div
-            className="flex w-full transition-transform duration-700 ease-out"
-            style={{
-              transform: `translateX(-${active * 100}%)`,
-              transitionDuration: reduceMotion ? '0ms' : undefined,
-            }}
-            aria-live="polite"
-          >
+        <div className="relative w-full overflow-hidden" aria-live="polite">
+          <div className="grid w-full grid-cols-1">
             {offers.map((offer, i) => (
               <div
                 key={offer.id}
@@ -127,7 +120,11 @@ export function OffersCarousel({
                 aria-roledescription="slide"
                 aria-label={`Offer ${i + 1} of ${count}`}
                 aria-hidden={i !== active}
-                className="w-full basis-full shrink-0 min-w-0"
+                className="col-start-1 row-start-1 transition-transform duration-700 ease-out"
+                style={{
+                  transform: `translateX(${(i - active) * 100}%)`,
+                  transitionDuration: reduceMotion ? '0ms' : undefined,
+                }}
               >
                 <CarouselSlide offer={offer} currency={currency} />
               </div>

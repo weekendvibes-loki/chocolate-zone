@@ -2,24 +2,24 @@ import Link from 'next/link';
 
 export function OrdersClosedBanner() {
   return (
-    <div className="border-b border-amber-900/30 bg-[#2a1d17]">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-6 text-center sm:px-6">
-        <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-300">
-          <span className="size-1.5 rounded-full bg-amber-400" aria-hidden="true" />
+    <div className="border-b border-[#B3703D]/25 bg-[#2A1710]">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-2.5 gap-y-1 px-4 py-2.5 text-center sm:px-6">
+        <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">
+          <span
+            className="size-1.5 rounded-full bg-[#F2B84B] shadow-[0_0_8px_rgba(242,184,75,0.7)]"
+            aria-hidden="true"
+          />
           Orders paused
         </span>
-        <p className="max-w-xl text-sm leading-6 text-zinc-300">
-          We&apos;re not taking orders right now. You can still browse the menu and build your cart —
-          checkout will reopen soon.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/products"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-amber-400 px-5 text-sm font-semibold text-zinc-900 transition-all hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
-          >
-            Browse the menu
-          </Link>
-        </div>
+        <span className="text-xs text-[#E7D5C1]/80">
+          We&apos;re not taking orders right now — checkout reopens soon.
+        </span>
+        <Link
+          href="/products"
+          className="text-xs font-semibold text-[#F2B84B] underline-offset-4 transition-colors duration-300 hover:text-[#FFF7EA] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60"
+        >
+          Browse the menu
+        </Link>
       </div>
     </div>
   );

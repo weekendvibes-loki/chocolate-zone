@@ -15,7 +15,7 @@ const navLinks = [
 ];
 
 const iconButton =
-  'group relative grid size-11 place-items-center rounded-xl border border-[#B3703D]/30 bg-white/[0.04] text-[#E7D5C1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/50 hover:bg-[#F2B84B]/10 hover:text-[#F2B84B] hover:shadow-[0_0_20px_rgba(242,184,75,0.3),inset_0_1px_0_rgba(255,255,255,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 sm:size-10';
+  'group relative grid size-11 place-items-center rounded-full border border-[#B3703D]/40 bg-gradient-to-b from-white/[0.07] to-white/[0.02] text-[#E7D5C1] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/60 hover:bg-[#B3703D]/25 hover:text-[#F2B84B] hover:shadow-[0_0_22px_rgba(242,184,75,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 sm:size-10';
 
 export function StorefrontHeader() {
   const { summary, openCart } = useCart();
@@ -102,24 +102,31 @@ export function StorefrontHeader() {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="relative animate-[header-enter_0.6s_ease-out] shadow-[0_12px_30px_-14px_rgba(0,0,0,0.55)]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#2A1710] via-[#241309] to-[#1E100B]" />
+      <div className="relative animate-[header-enter_0.6s_ease-out] shadow-[0_16px_36px_-18px_rgba(0,0,0,0.65)]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#311A10] via-[#2A1710] to-[#1E100B]" />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_150%_at_35%_0%,rgba(179,112,61,0.3),transparent_60%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(75%_170%_at_38%_0%,rgba(179,112,61,0.34),transparent_62%)]"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_130%_at_85%_0%,rgba(242,184,75,0.12),transparent_65%)]"
-        />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B3703D]/80 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(42%_140%_at_88%_0%,rgba(242,184,75,0.14),transparent_65%)]"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/25 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.02)_32%,rgba(0,0,0,0.1)_76%,rgba(0,0,0,0.26)_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(180deg,rgba(255,255,255,0.016)_0,rgba(255,255,255,0.016)_1px,transparent_1px,transparent_15px)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B3703D]/90 to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/30 to-transparent"
         />
 
         <div className="relative mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:h-20">
@@ -128,32 +135,34 @@ export function StorefrontHeader() {
             aria-label="Chocolate Zone — home"
             className="group flex shrink-0 items-center justify-self-start rounded-xl transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/70"
           >
-            <span className="relative block aspect-[4/3] w-14 transition-all duration-300 group-hover:drop-shadow-[0_0_16px_rgba(242,184,75,0.35)] sm:w-20 lg:w-24">
+            <span className="relative block aspect-[4/3] w-14 transition-all duration-300 group-hover:scale-[1.04] group-hover:drop-shadow-[0_0_18px_rgba(242,184,75,0.4)] sm:w-20 lg:w-24">
               <ChocolateZoneLogo className="absolute inset-0 h-full w-full" />
             </span>
           </Link>
 
-          <nav className="hidden items-center justify-center gap-8 lg:flex" aria-label="Main navigation">
+          <nav className="hidden items-center justify-center gap-2 lg:flex" aria-label="Main navigation">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               return (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`group relative px-1 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 hover:-translate-y-px hover:drop-shadow-[0_0_6px_rgba(242,184,75,0.4)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
+                  className={`group relative flex items-center rounded-full px-4 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
                     active ? 'text-[#F2B84B]' : 'text-[#E7D5C1] hover:text-[#FFF7EA]'
                   }`}
                 >
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-x-0 top-0 bottom-0 rounded-lg bg-[radial-gradient(70%_140%_at_50%_100%,rgba(179,112,61,0.2),transparent_70%)] transition-opacity duration-300 ${
-                      active ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    className={`absolute inset-0 rounded-full transition-all duration-300 ${
+                      active
+                        ? 'bg-[#B3703D]/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-[#B3703D]/40'
+                        : 'bg-transparent group-hover:bg-[#B3703D]/10'
                     }`}
                   />
                   <span className="relative">{link.label}</span>
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-x-1 -bottom-[3px] h-[2px] origin-left rounded-full bg-gradient-to-r from-[#B3703D] to-[#F2B84B] shadow-[0_0_8px_rgba(242,184,75,0.6)] transition-transform duration-300 ease-out ${
+                    className={`absolute inset-x-3 -bottom-[2px] h-[2.5px] origin-left rounded-full bg-gradient-to-r from-[#B3703D] to-[#F2B84B] shadow-[0_0_10px_rgba(242,184,75,0.65)] transition-transform duration-300 ease-out ${
                       active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                     }`}
                   />
@@ -336,8 +345,10 @@ export function StorefrontHeader() {
                     <Link
                       href={link.href}
                       onClick={closeMenu}
-                      className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-[0.85rem] font-semibold uppercase tracking-[0.14em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
-                        active ? 'text-[#F2B84B]' : 'text-[#E7D5C1] hover:text-white'
+                      className={`flex min-h-12 items-center gap-3 rounded-xl px-3.5 text-[0.85rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
+                        active
+                          ? 'bg-[#B3703D]/20 text-[#F2B84B] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-[#B3703D]/40'
+                          : 'text-[#E7D5C1] hover:bg-white/[0.03] hover:text-white'
                       }`}
                     >
                       {active && (
