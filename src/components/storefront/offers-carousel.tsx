@@ -18,9 +18,7 @@ export function OffersCarousel({
   const count = offers.length;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState<boolean>(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
+  const [reduceMotion, setReduceMotion] = useState(false);
   const regionRef = useRef<HTMLDivElement>(null);
 
   const go = useCallback(
@@ -33,6 +31,7 @@ export function OffersCarousel({
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotion(mq.matches);
     const onChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);

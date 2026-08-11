@@ -86,26 +86,26 @@ export async function StorefrontFooter() {
   const timings = timingSummary(shop?.timings ?? null);
 
   return (
-    <footer id="contact" className="border-t border-[#1f1510] bg-[#241a15]">
+    <footer id="contact" className="border-t border-[#F2B84B]/20 bg-[#1A0E0A]">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="grid size-9 place-items-center rounded-xl bg-amber-400 text-zinc-900">
+            <span className="grid size-9 place-items-center rounded-xl border border-[#F2B84B]/30 bg-[#F2B84B]/10 text-[#F2B84B]">
               <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="M3 10h18M3 14h18M8 5v4M16 5v4" strokeLinecap="round" />
               </svg>
             </span>
-            <span className="font-serif text-lg font-semibold text-white">{brand}</span>
+            <span className="font-serif text-lg font-semibold text-[#FFF7EA]">{brand}</span>
           </div>
-          <p className="mt-4 max-w-xs text-sm leading-6 text-zinc-400">
+          <p className="mt-4 max-w-xs text-sm leading-6 text-[#E8D5BE]/75">
             Handcrafted chocolates made fresh every day with premium cocoa and real ingredients.
           </p>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-amber-400">Contact</h3>
-          <ul className="mt-4 space-y-2.5 text-sm text-zinc-300">
+          <h3 className="text-sm font-semibold uppercase tracking-widest text-[#F2B84B]">Contact</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-[#E8D5BE]">
             {phone ? <li>Phone / WhatsApp: {phone}</li> : null}
             {email ? <li>Email: {email}</li> : null}
             {address ? <li>Address: {address}</li> : null}
@@ -116,8 +116,8 @@ export async function StorefrontFooter() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-amber-400">Store timings</h3>
-          <ul className="mt-4 space-y-2.5 text-sm text-zinc-300">
+          <h3 className="text-sm font-semibold uppercase tracking-widest text-[#F2B84B]">Store timings</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-[#E8D5BE]">
             {timings.rows.map((row, i) => (
               <li key={i} className="flex justify-between gap-4">
                 <span>{row.label}</span>
@@ -131,7 +131,7 @@ export async function StorefrontFooter() {
                 key={s.label}
                 href={s.href}
                 aria-label={s.label}
-                className="grid size-10 place-items-center rounded-full border border-zinc-700 text-zinc-400 transition-colors hover:border-amber-400 hover:bg-amber-400 hover:text-zinc-900"
+                className="grid size-10 place-items-center rounded-full border border-[#F2B84B]/30 text-[#E8D5BE] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B] hover:text-[#F2B84B] hover:shadow-[0_0_12px_rgba(242,184,75,0.25)]"
               >
                 {socialIcon(s.label)}
               </Link>
@@ -139,7 +139,7 @@ export async function StorefrontFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-white/10 py-5 text-center text-xs text-zinc-500">
+      <div className="border-t border-[#F2B84B]/10 py-5 text-center text-xs text-[#E8D5BE]/60">
         © {new Date().getFullYear()} {brand}. All rights reserved.
       </div>
     </footer>

@@ -102,7 +102,7 @@ export function StorefrontHeader() {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="relative animate-[header-enter_0.6s_ease-out]">
+      <div className="relative animate-[header-enter_0.6s_ease-out] shadow-[0_12px_30px_-14px_rgba(0,0,0,0.55)]">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#2B1810] via-[#24140D] to-[#170D08]" />
         <div
           aria-hidden="true"
@@ -124,20 +124,8 @@ export function StorefrontHeader() {
             aria-label="Chocolate Zone — home"
             className="group flex shrink-0 items-center justify-self-start rounded-xl transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/70"
           >
-            <span className="relative block aspect-[4/3] w-14 sm:w-20 lg:w-24">
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FFF7EA] via-[#F7E8CE] to-[#F0DDBB] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_8px_20px_-8px_rgba(0,0,0,0.6)]"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-xl ring-1 ring-inset ring-[#B3703D]/50 transition-all duration-300 group-hover:ring-[#F2B84B] group-hover:shadow-[0_0_24px_rgba(242,184,75,0.45)]"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-xl bg-[radial-gradient(120%_120%_at_25%_10%,rgba(255,255,255,0.55),transparent_45%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              />
-              <ChocolateZoneLogo className="absolute inset-0 h-full w-full drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]" />
+            <span className="relative block aspect-[4/3] w-14 transition-all duration-300 group-hover:drop-shadow-[0_0_16px_rgba(242,184,75,0.35)] sm:w-20 lg:w-24">
+              <ChocolateZoneLogo className="absolute inset-0 h-full w-full" />
             </span>
           </Link>
 
@@ -148,7 +136,7 @@ export function StorefrontHeader() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`group relative px-1 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.18em] transition-colors duration-300 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
+                  className={`group relative px-1 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.18em] transition-all duration-300 hover:-translate-y-px hover:drop-shadow-[0_0_6px_rgba(242,184,75,0.4)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
                     active ? 'text-[#F2B84B]' : 'text-[#E8D5BE] hover:text-[#FFF7EA]'
                   }`}
                 >
@@ -326,7 +314,11 @@ export function StorefrontHeader() {
           >
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/50 to-transparent"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_100%_at_50%_0%,rgba(179,112,61,0.22),transparent_70%)]"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent"
             />
             <ul className="divide-y divide-white/[0.06]">
               {navLinks.map((link, i) => {
