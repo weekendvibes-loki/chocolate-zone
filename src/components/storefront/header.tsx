@@ -15,7 +15,7 @@ const navLinks = [
 ];
 
 const iconButton =
-  'group relative grid size-11 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-[#E8D5BE] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/50 hover:bg-[#F2B84B]/10 hover:text-[#F2B84B] hover:shadow-[0_0_20px_rgba(242,184,75,0.3),inset_0_1px_0_rgba(255,255,255,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 sm:size-10';
+  'group relative grid size-11 place-items-center rounded-xl border border-[#B3703D]/30 bg-white/[0.04] text-[#E7D5C1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/50 hover:bg-[#F2B84B]/10 hover:text-[#F2B84B] hover:shadow-[0_0_20px_rgba(242,184,75,0.3),inset_0_1px_0_rgba(255,255,255,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 sm:size-10';
 
 export function StorefrontHeader() {
   const { summary, openCart } = useCart();
@@ -103,15 +103,19 @@ export function StorefrontHeader() {
   return (
     <header className="sticky top-0 z-40">
       <div className="relative animate-[header-enter_0.6s_ease-out] shadow-[0_12px_30px_-14px_rgba(0,0,0,0.55)]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#2B1810] via-[#24140D] to-[#170D08]" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#2A1710] via-[#241309] to-[#1E100B]" />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_140%_at_50%_0%,rgba(242,184,75,0.14),transparent_60%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_150%_at_35%_0%,rgba(179,112,61,0.3),transparent_60%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_130%_at_85%_0%,rgba(242,184,75,0.12),transparent_65%)]"
         />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent" />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/70 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B3703D]/80 to-transparent"
         />
         <div
           aria-hidden="true"
@@ -136,8 +140,8 @@ export function StorefrontHeader() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`group relative px-1 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.18em] transition-all duration-300 hover:-translate-y-px hover:drop-shadow-[0_0_6px_rgba(242,184,75,0.4)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
-                    active ? 'text-[#F2B84B]' : 'text-[#E8D5BE] hover:text-[#FFF7EA]'
+                  className={`group relative px-1 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 hover:-translate-y-px hover:drop-shadow-[0_0_6px_rgba(242,184,75,0.4)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
+                    active ? 'text-[#F2B84B]' : 'text-[#E7D5C1] hover:text-[#FFF7EA]'
                   }`}
                 >
                   <span
@@ -188,14 +192,14 @@ export function StorefrontHeader() {
               </button>
 
               {searchOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] overflow-hidden rounded-2xl border border-white/10 bg-[#24140D]/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] backdrop-blur-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] overflow-hidden rounded-2xl border border-white/10 bg-[#1E100B]/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] backdrop-blur-xl">
                   <div
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/50 to-transparent"
                   />
                   <form onSubmit={applySearch} className="relative">
                     <svg
-                      className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#E8D5BE]/50"
+                      className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#E7D5C1]/50"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -212,7 +216,7 @@ export function StorefrontHeader() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Search products…"
-                      className="w-full rounded-xl border border-white/10 bg-[#2B1810] py-2.5 pl-9 pr-9 text-sm text-[#FFF7EA] placeholder:text-[#E8D5BE]/45 focus:border-[#F2B84B]/70 focus:outline-none focus:ring-2 focus:ring-[#F2B84B]/30"
+                      className="w-full rounded-xl border border-white/10 bg-[#1E100B] py-2.5 pl-9 pr-9 text-sm text-[#FFF7EA] placeholder:text-[#E7D5C1]/45 focus:border-[#F2B84B]/70 focus:outline-none focus:ring-2 focus:ring-[#F2B84B]/30"
                     />
                     {searchTerm && (
                       <button
@@ -222,7 +226,7 @@ export function StorefrontHeader() {
                           searchInputRef.current?.focus();
                         }}
                         aria-label="Clear search"
-                        className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-[#E8D5BE]/60 transition-colors hover:bg-[#3a2a20] hover:text-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60"
+                        className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-[#E7D5C1]/60 transition-colors hover:bg-[#3b2a1d] hover:text-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60"
                       >
                         <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                           <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -254,7 +258,7 @@ export function StorefrontHeader() {
               {summary.itemCount > 0 && (
                 <span
                   key={summary.itemCount}
-                  className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[header-pop_0.25s_ease-out] place-items-center rounded-full bg-[#F2B84B] px-1 text-[0.65rem] font-bold text-[#24140D] shadow-[0_0_10px_rgba(242,184,75,0.5)] ring-2 ring-[#24140D]"
+                  className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[header-pop_0.25s_ease-out] place-items-center rounded-full bg-[#F2B84B] px-1 text-[0.65rem] font-bold text-[#1E100B] shadow-[0_0_10px_rgba(242,184,75,0.5)] ring-2 ring-[#1E100B]"
                 >
                   {summary.itemCount > 99 ? '99+' : summary.itemCount}
                 </span>
@@ -297,7 +301,7 @@ export function StorefrontHeader() {
             type="button"
             aria-label="Close menu"
             onClick={closeMenu}
-            className={`fixed inset-x-0 bottom-0 top-16 z-40 w-full cursor-default bg-[#120b08]/60 backdrop-blur-sm ${
+            className={`fixed inset-x-0 bottom-0 top-16 z-40 w-full cursor-default bg-[#120b08]/50 backdrop-blur-sm ${
               closing
                 ? 'animate-[header-fade-out_0.2s_ease-in_forwards]'
                 : 'animate-[header-fade-in_0.2s_ease-out]'
@@ -306,7 +310,7 @@ export function StorefrontHeader() {
           <nav
             id="mobile-menu"
             aria-label="Mobile navigation"
-            className={`absolute inset-x-0 top-16 z-50 border-t border-white/10 bg-gradient-to-b from-[#2B1810] to-[#24140D]/95 px-4 pb-5 pt-2 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.8)] backdrop-blur-xl ${
+            className={`absolute inset-x-0 top-16 z-50 border-t border-white/10 bg-gradient-to-b from-[#2A1710] to-[#1E100B]/95 px-4 pb-5 pt-2 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.8)] backdrop-blur-xl ${
               closing
                 ? 'animate-[menu-exit_0.2s_ease-in_forwards]'
                 : 'animate-[header-slide-down_0.25s_ease-out]'
@@ -332,8 +336,8 @@ export function StorefrontHeader() {
                     <Link
                       href={link.href}
                       onClick={closeMenu}
-                      className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-[0.85rem] font-semibold uppercase tracking-[0.16em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
-                        active ? 'text-[#F2B84B]' : 'text-[#E8D5BE] hover:text-white'
+                      className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-[0.85rem] font-semibold uppercase tracking-[0.14em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
+                        active ? 'text-[#F2B84B]' : 'text-[#E7D5C1] hover:text-white'
                       }`}
                     >
                       {active && (

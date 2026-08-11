@@ -86,8 +86,15 @@ export async function StorefrontFooter() {
   const timings = timingSummary(shop?.timings ?? null);
 
   return (
-    <footer id="contact" className="border-t border-[#F2B84B]/20 bg-[#1A0E0A]">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+    <footer
+      id="contact"
+      className="relative overflow-hidden border-t border-[#B3703D]/30 bg-gradient-to-b from-[#2A1710] to-[#1E100B]"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(179,112,61,0.18),transparent_70%)]"
+      />
+      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-2.5">
             <span className="grid size-9 place-items-center rounded-xl border border-[#F2B84B]/30 bg-[#F2B84B]/10 text-[#F2B84B]">
@@ -98,14 +105,35 @@ export async function StorefrontFooter() {
             </span>
             <span className="font-serif text-lg font-semibold text-[#FFF7EA]">{brand}</span>
           </div>
-          <p className="mt-4 max-w-xs text-sm leading-6 text-[#E8D5BE]/75">
+          <p className="mt-4 max-w-xs text-sm leading-6 text-[#E7D5C1]/75">
             Handcrafted chocolates made fresh every day with premium cocoa and real ingredients.
           </p>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-[#F2B84B]">Contact</h3>
-          <ul className="mt-4 space-y-2.5 text-sm text-[#E8D5BE]">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">Explore</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-[#E7D5C1]">
+            {[
+              { href: '/', label: 'Home' },
+              { href: '#menu', label: 'Menu' },
+              { href: '/products', label: 'Shop' },
+              { href: '/offers', label: 'Offers' },
+            ].map((link) => (
+              <li key={link.label}>
+                <Link
+                  href={link.href}
+                  className="inline-flex items-center gap-2 transition-colors duration-300 hover:text-[#F2B84B]"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">Contact</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-[#E7D5C1]">
             {phone ? <li>Phone / WhatsApp: {phone}</li> : null}
             {email ? <li>Email: {email}</li> : null}
             {address ? <li>Address: {address}</li> : null}
@@ -116,8 +144,8 @@ export async function StorefrontFooter() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-[#F2B84B]">Store timings</h3>
-          <ul className="mt-4 space-y-2.5 text-sm text-[#E8D5BE]">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">Store timings</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-[#E7D5C1]">
             {timings.rows.map((row, i) => (
               <li key={i} className="flex justify-between gap-4">
                 <span>{row.label}</span>
@@ -131,7 +159,7 @@ export async function StorefrontFooter() {
                 key={s.label}
                 href={s.href}
                 aria-label={s.label}
-                className="grid size-10 place-items-center rounded-full border border-[#F2B84B]/30 text-[#E8D5BE] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B] hover:text-[#F2B84B] hover:shadow-[0_0_12px_rgba(242,184,75,0.25)]"
+                className="grid size-10 place-items-center rounded-full border border-[#B3703D]/40 text-[#E7D5C1] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B] hover:text-[#F2B84B] hover:shadow-[0_0_12px_rgba(242,184,75,0.25)]"
               >
                 {socialIcon(s.label)}
               </Link>
@@ -139,7 +167,7 @@ export async function StorefrontFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-[#F2B84B]/10 py-5 text-center text-xs text-[#E8D5BE]/60">
+      <div className="relative border-t border-white/[0.06] py-5 text-center text-xs text-[#E7D5C1]/60">
         © {new Date().getFullYear()} {brand}. All rights reserved.
       </div>
     </footer>
