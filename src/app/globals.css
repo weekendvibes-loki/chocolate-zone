@@ -25,11 +25,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@keyframes header-pop {
-  from {
-    transform: scale(0.5);
+@keyframes badge-pop {
+  0% {
+    transform: scale(1);
   }
-  to {
+  35% {
+    transform: scale(1.35);
+  }
+  70% {
+    transform: scale(0.92);
+  }
+  100% {
     transform: scale(1);
   }
 }

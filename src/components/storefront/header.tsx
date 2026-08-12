@@ -15,7 +15,7 @@ const navLinks = [
 ];
 
 const iconButton =
-  'group relative grid size-11 place-items-center rounded-full border border-[#B3703D]/40 bg-gradient-to-b from-white/[0.07] to-white/[0.02] text-[#E7D5C1] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/60 hover:bg-[#B3703D]/25 hover:text-[#F2B84B] hover:shadow-[0_0_22px_rgba(242,184,75,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 sm:size-10';
+  'group relative grid size-11 place-items-center rounded-full border border-[#B3703D]/40 bg-gradient-to-b from-white/[0.07] to-white/[0.02] text-[#E7D5C1] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/60 hover:bg-[#B3703D]/25 hover:text-[#F2B84B] hover:shadow-[0_0_22px_rgba(242,184,75,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:size-10';
 
 export function StorefrontHeader() {
   const { summary, openCart } = useCart();
@@ -181,27 +181,39 @@ export function StorefrontHeader() {
                 aria-controls="header-search-input"
                 className={iconButton}
               >
-                <svg
-                  className="size-5 transition-transform duration-200 group-hover:scale-110"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  aria-hidden="true"
-                >
-                  {searchOpen ? (
+                <span className="relative block size-5" aria-hidden="true">
+                  <svg
+                    className={`absolute inset-0 size-5 transition-all duration-300 ease-out motion-reduce:transition-none ${
+                      searchOpen
+                        ? 'scale-50 -rotate-90 opacity-0'
+                        : 'scale-100 rotate-0 opacity-100 group-hover:scale-[1.08] group-hover:-rotate-6'
+                    }`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m21 21-4.35-4.35" strokeLinecap="round" />
+                  </svg>
+                  <svg
+                    className={`absolute inset-0 size-5 transition-all duration-300 ease-out motion-reduce:transition-none ${
+                      searchOpen
+                        ? 'scale-100 rotate-0 opacity-100'
+                        : 'scale-50 rotate-90 opacity-0'
+                    }`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
                     <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
-                  ) : (
-                    <>
-                      <circle cx="11" cy="11" r="7" />
-                      <path d="m21 21-4.35-4.35" strokeLinecap="round" />
-                    </>
-                  )}
-                </svg>
+                  </svg>
+                </span>
               </button>
 
               {searchOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] overflow-hidden rounded-2xl border border-white/10 bg-[#1E100B]/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] backdrop-blur-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] overflow-hidden rounded-2xl border border-white/10 bg-[#1E100B]/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] backdrop-blur-xl motion-reduce:animate-none">
                   <div
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/50 to-transparent"
@@ -254,7 +266,7 @@ export function StorefrontHeader() {
               className={iconButton}
             >
               <svg
-                className="size-5 transition-transform duration-200 group-hover:scale-110"
+                className="size-5 transition-transform duration-300 ease-out motion-reduce:transition-none group-hover:scale-[1.08]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -267,7 +279,7 @@ export function StorefrontHeader() {
               {summary.itemCount > 0 && (
                 <span
                   key={summary.itemCount}
-                  className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[header-pop_0.25s_ease-out] place-items-center rounded-full bg-[#F2B84B] px-1 text-[0.65rem] font-bold text-[#1E100B] shadow-[0_0_10px_rgba(242,184,75,0.5)] ring-2 ring-[#1E100B]"
+                  className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[badge-pop_0.4s_ease-out] place-items-center rounded-full bg-[#F2B84B] px-1 text-[0.65rem] font-bold text-[#1E100B] shadow-[0_0_10px_rgba(242,184,75,0.5)] ring-2 ring-[#1E100B] motion-reduce:animate-none"
                 >
                   {summary.itemCount > 99 ? '99+' : summary.itemCount}
                 </span>
@@ -284,18 +296,18 @@ export function StorefrontHeader() {
             >
               <span className="relative block h-3.5 w-5" aria-hidden="true">
                 <span
-                  className={`absolute left-0 top-0 h-[2px] w-full rounded-full bg-current transition-all duration-300 ${
-                    menuOpen ? 'top-1.5 rotate-45' : ''
+                  className={`absolute left-0 top-0 h-[2px] w-full rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                    menuOpen ? 'translate-y-[6px] rotate-45' : ''
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-1.5 h-[2px] w-full rounded-full bg-current transition-all duration-300 ${
-                    menuOpen ? 'opacity-0' : ''
+                  className={`absolute left-0 top-1.5 h-[2px] w-full rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                    menuOpen ? 'scale-x-0 opacity-0' : ''
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-3 h-[2px] w-full rounded-full bg-current transition-all duration-300 ${
-                    menuOpen ? 'top-1.5 -rotate-45' : ''
+                  className={`absolute left-0 top-3 h-[2px] w-full rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                    menuOpen ? '-translate-y-[6px] -rotate-45' : ''
                   }`}
                 />
               </span>
