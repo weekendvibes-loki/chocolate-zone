@@ -129,7 +129,7 @@ export function StorefrontHeader() {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/30 to-transparent"
         />
 
-        <div className="relative mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:h-20">
+        <div className="relative mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:h-20 lg:grid lg:grid-cols-[1fr_auto_1fr]">
           <Link
             href="/"
             aria-label="Chocolate Zone — home"
@@ -171,7 +171,7 @@ export function StorefrontHeader() {
             })}
           </nav>
 
-          <div className="flex items-center justify-end gap-1 sm:gap-1.5">
+          <div className="ml-auto flex items-center justify-end gap-1 sm:gap-1.5">
             <div className="relative" ref={searchPanelRef}>
               <button
                 type="button"
