@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { formatMoney, menuWasPriceMinor, toMinor } from '@/lib/pricing/money';
 import { discountLabel, isBundleOffer } from '@/components/storefront/offer-label';
 import { StockIndicator } from '@/components/storefront/stock-indicator';
+import { ProductImageFallback } from '@/components/storefront/product-image-fallback';
 import { ProductCard } from '@/components/storefront/product-card';
 import { useCart } from '@/components/storefront/cart-context';
 import { useToast } from '@/components/admin/toast';
@@ -132,12 +133,7 @@ export function ProductDetails({
                 className="object-cover"
               />
             ) : (
-              <span className="grid h-full w-full place-items-center text-zinc-300">
-                <svg className="size-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-                  <path d="M3 10h18M3 14h18M8 5v4M16 5v4" strokeLinecap="round" />
-                </svg>
-              </span>
+              <ProductImageFallback name={product.name} />
             )}
             {bestOffer && !isBundle ? (
               <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900 shadow-sm">
@@ -171,9 +167,9 @@ export function ProductDetails({
 
         <div className="flex flex-col">
           {category && (
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">{category.name}</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">{category.name}</span>
           )}
-          <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+          <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
             {product.name}
           </h1>
 
@@ -181,7 +177,7 @@ export function ProductDetails({
             {wasMinor !== null && (
               <span className="text-lg font-medium text-zinc-400 line-through">{formatMoney(wasMinor, currency)}</span>
             )}
-            <span className="text-3xl font-bold text-zinc-900 sm:text-4xl">{formatMoney(priceMinor, currency)}</span>
+            <span className="text-3xl font-bold text-[#2A1710] sm:text-4xl">{formatMoney(priceMinor, currency)}</span>
             {bestOffer && !isBundle ? (
               <span className="rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-zinc-900">
                 {discountLabel(bestOffer, currency)}
@@ -191,18 +187,18 @@ export function ProductDetails({
             )}
           </div>
           {deltaMinor !== 0 && (
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-[#6B4A33]">
               Base price: {formatMoney(baseMinor, currency)}
             </p>
           )}
 
-          <div className="mt-3">
+          {product.description && (
+            <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-[#6B4A33]">{product.description}</p>
+          )}
+
+          <div className="mt-4">
             <StockIndicator stock={product.stock_qty} />
           </div>
-
-          {product.description && (
-            <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-zinc-600">{product.description}</p>
-          )}
 
           {groups.length > 0 && (
             <div className="mt-7 space-y-6">
@@ -221,8 +217,8 @@ export function ProductDetails({
                           aria-pressed={isSelected}
                           className={`inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                             isSelected
-                              ? 'border-zinc-900 bg-zinc-900 text-white shadow-sm'
-                              : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 hover:text-zinc-900'
+                              ? 'border-[#2A1710] bg-[#2A1710] text-[#F5E6D5] shadow-sm'
+                              : 'border-[#E7D5C1] bg-white text-[#6B4A33] hover:border-[#B3703D] hover:text-[#2A1710]'
                           }`}
                         >
                           {v.option}
@@ -242,9 +238,9 @@ export function ProductDetails({
             </div>
           )}
 
-          <div className="mt-7">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-semibold text-zinc-900">Quantity</span>
+          <div className="mt-7 rounded-2xl border border-[#E7D5C1] bg-[#FFF7EA] p-4 sm:p-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-semibold text-[#2A1710]">Quantity</span>
               <div className="inline-flex items-center overflow-hidden rounded-xl border border-[#E7D5C1] bg-white">
                 <button
                   type="button"
@@ -272,39 +268,48 @@ export function ProductDetails({
                   </svg>
                 </button>
               </div>
-              <span className="text-sm text-zinc-500">× {formatMoney(priceMinor, currency)}</span>
+              <span className="text-sm font-medium text-[#6B4A33]">× {formatMoney(priceMinor, currency)}</span>
             </div>
             {inCartQty > 0 && (
-              <p className="mt-2.5 flex items-center gap-1.5 text-sm font-medium text-[#B3703D]">
+              <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-[#B3703D]">
                 <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                   <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 {inCartQty} in your cart
               </p>
             )}
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2A1710] px-6 py-3.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
+            >
+              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
+                <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
+              </svg>
+              {outOfStock ? 'Out of stock' : quantity > 1 ? `Add ${quantity} to Cart` : 'Add to Cart'}
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={outOfStock}
-            className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2A1710] px-6 py-3.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
-          >
-            <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
-              <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
-            </svg>
-            {outOfStock ? 'Out of stock' : quantity > 1 ? `Add ${quantity} to Cart` : 'Add to Cart'}
-          </button>
         </div>
       </div>
 
       {related.length > 0 && (
-        <section className="mt-16 border-t border-zinc-200 pt-10">
-          <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">Keep exploring</span>
-          <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-            You might also like
-          </h2>
+        <section className="mt-16 border-t border-[#E7D5C1] pt-10">
+          <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">Keep exploring</span>
+              <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[#2A1710] sm:text-3xl">
+                You might also like
+              </h2>
+            </div>
+            <Link
+              href="/products"
+              className="text-sm font-semibold text-[#B3703D] transition-colors hover:text-[#2A1710] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            >
+              View all →
+            </Link>
+          </div>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {related.map((p) => {
               const offer = p.bestOfferId ? (offersById.get(p.bestOfferId) ?? null) : null;

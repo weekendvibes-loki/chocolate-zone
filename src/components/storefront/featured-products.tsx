@@ -11,25 +11,25 @@ export function FeaturedProducts({ catalog }: { catalog: Catalog }) {
   const featured = selectFeatured(catalog.products, FEATURED_LIMIT);
 
   return (
-    <section id="featured" className="border-y border-zinc-200 bg-[#faf5ec]">
+    <section id="featured" className="border-y border-[#E7D5C1] bg-[#faf5ec]">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
-              Handpicked
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">
+              Our favorites
             </span>
-            <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-              Featured chocolates
+            <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
+              Customer-loved chocolates
             </h2>
-            <p className="mt-3 max-w-lg text-sm leading-6 text-zinc-600">
-              Our most-loved chocolates, ready to order.
+            <p className="mt-3 max-w-lg text-sm leading-6 text-[#6B4A33]">
+              The ones our regulars keep coming back for, ready to order.
             </p>
           </div>
           <Link
             href="/products"
-            className="text-sm font-medium text-amber-700 transition-colors hover:text-amber-900"
+            className="text-sm font-semibold text-[#B3703D] transition-colors hover:text-[#2A1710]"
           >
-            Shop all →
+            View full menu →
           </Link>
         </div>
 

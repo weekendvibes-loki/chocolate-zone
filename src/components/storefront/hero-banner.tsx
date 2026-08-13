@@ -9,33 +9,33 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
 
   return (
     <section className="relative overflow-hidden bg-[#faf5ec]">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-amber-200/50 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-32 -left-24 size-80 rounded-full bg-[#3a2418]/10 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute right-10 top-12 hidden size-16 rotate-12 rounded-2xl bg-[#3a2418]/80 shadow-lg lg:block" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-12 right-48 hidden size-8 rounded-full bg-amber-400/80 lg:block" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-[#F2B84B]/25 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-32 -left-24 size-80 rounded-full bg-[#B3703D]/10 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute right-10 top-12 hidden size-16 rotate-12 rounded-2xl bg-[#2A1710]/85 shadow-lg lg:block" />
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-12 right-48 hidden size-8 rounded-full bg-[#F2B84B] lg:block" />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-20">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-3 py-1 text-xs font-semibold text-amber-700">
-            <span className="size-1.5 rounded-full bg-amber-500" aria-hidden="true" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#E7D5C1] bg-white/80 px-3 py-1 text-xs font-semibold text-[#B3703D]">
+            <span className="size-1.5 rounded-full bg-[#F2B84B]" aria-hidden="true" />
             Small-batch · Handcrafted · Daily fresh
           </span>
-          <h1 className="mt-5 font-serif text-4xl font-semibold leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl">
-            Handcrafted <span className="text-amber-700">chocolate</span>, made fresh daily.
+          <h1 className="mt-5 font-serif text-4xl font-semibold leading-tight tracking-tight text-[#2A1710] sm:text-5xl lg:text-6xl">
+            Handcrafted <span className="text-[#B3703D]">chocolate</span>, made fresh daily.
           </h1>
-          <p className="mt-5 max-w-md text-base leading-7 text-zinc-600 sm:text-lg">
+          <p className="mt-5 max-w-md text-base leading-7 text-[#6B4A33] sm:text-lg">
             From rich dark bars to silky truffles — every piece is crafted with premium cocoa and a whole lot of love.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/products"
-              className="rounded-xl bg-zinc-900 px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-zinc-700 hover:shadow-md"
+              className="rounded-xl bg-[#2A1710] px-7 py-3.5 text-sm font-semibold text-[#FFF7EA] shadow-md shadow-[#2A1710]/20 ring-1 ring-[#F2B84B]/50 transition-all hover:-translate-y-0.5 hover:bg-[#1E100B] hover:shadow-lg hover:shadow-[#2A1710]/30 motion-reduce:transition-none"
             >
               Shop Chocolates
             </Link>
             <Link
               href="/offers"
-              className="rounded-xl border border-zinc-300 bg-white px-7 py-3.5 text-sm font-semibold text-zinc-700 transition-colors hover:border-amber-400 hover:text-amber-700"
+              className="rounded-xl border border-[#B3703D]/60 bg-white/80 px-7 py-3.5 text-sm font-semibold text-[#7A4E2D] transition-all hover:-translate-y-0.5 hover:border-[#B3703D] hover:bg-[#F2B84B]/10 hover:text-[#2A1710] motion-reduce:transition-none"
             >
               Explore Offers
             </Link>
@@ -53,22 +53,23 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
                   src={offer.image_url}
                   alt={offer.title}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  priority
+                  sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 45vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-300 to-amber-500">
-                  <span className="px-6 text-center font-serif text-xl font-semibold text-amber-950">
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#B3703D] to-[#1E100B]">
+                  <span className="px-6 text-center font-serif text-xl font-semibold text-[#FFF7EA]">
                     {offer.title}
                   </span>
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2a1d17]/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1E100B]/80 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-5">
-                <span className="inline-flex rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-zinc-900">
+                <span className="inline-flex rounded-full bg-[#F2B84B] px-2.5 py-1 text-xs font-bold text-[#1E100B]">
                   {discountLabel(offer, currency)}
                 </span>
-                <h2 className="mt-2 font-serif text-xl font-semibold text-white">{offer.title}</h2>
+                <h2 className="mt-2 font-serif text-xl font-semibold text-[#FFF7EA]">{offer.title}</h2>
                 {offer.description && (
                   <p className="mt-1 line-clamp-2 text-sm text-white/80">{offer.description}</p>
                 )}
@@ -91,12 +92,12 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
           {offer?.image_url && (
             <span
               aria-hidden="true"
-              className="absolute -bottom-4 -left-4 hidden rounded-2xl border border-amber-200 bg-white px-4 py-3 shadow-lg sm:block"
+              className="absolute -bottom-4 -left-4 hidden rounded-2xl border border-[#E7D5C1] bg-white px-4 py-3 shadow-lg sm:block"
             >
-              <span className="block text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+              <span className="block text-[11px] font-semibold uppercase tracking-wide text-[#B3703D]">
                 Today&apos;s pick
               </span>
-              <span className="mt-0.5 block font-serif text-base font-semibold text-zinc-900">
+              <span className="mt-0.5 block font-serif text-base font-semibold text-[#2A1710]">
                 Small-batch &amp; fresh
               </span>
             </span>

@@ -3,17 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { formatMoney, toMinor } from '@/lib/pricing/money';
 import { discountLabel } from '@/components/storefront/offer-label';
-import type { Offer } from '@/types/domain';
+import type { CatalogProduct, Offer } from '@/types/domain';
 
 const AUTOPLAY_MS = 4500;
 
 export function OffersCarousel({
   offers,
   currency,
+  products = [],
 }: {
   offers: Offer[];
   currency: string;
+  products?: CatalogProduct[];
 }) {
   const count = offers.length;
   const [active, setActive] = useState(0);
@@ -126,7 +129,7 @@ export function OffersCarousel({
                   transitionDuration: reduceMotion ? '0ms' : undefined,
                 }}
               >
-                <CarouselSlide offer={offer} currency={currency} />
+                <CarouselSlide offer={offer} currency={currency} products={products} priority={i === active} />
               </div>
             ))}
           </div>
@@ -153,7 +156,17 @@ export function OffersCarousel({
   );
 }
 
-function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) {
+function CarouselSlide({
+  offer,
+  currency,
+  products,
+  priority,
+}: {
+  offer: Offer;
+  currency: string;
+  products: CatalogProduct[];
+  priority: boolean;
+}) {
   return (
     <div className="grid w-full min-w-0 items-center gap-8 lg:grid-cols-2 lg:gap-16">
       <div className="order-2 min-w-0 lg:order-1">
@@ -169,11 +182,12 @@ function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) 
         {offer.description && (
           <p className="mt-5 max-w-md text-sm leading-7 text-[#E7D5C1]">{offer.description}</p>
         )}
+        <OfferBundle offer={offer} products={products} currency={currency} />
         <Link
           href={`/products?offer=${encodeURIComponent(offer.id)}`}
           className="mt-8 inline-flex max-w-full items-center justify-center rounded-xl bg-[#B3703D] px-7 py-3 text-sm font-semibold text-[#FFF7EA] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#B3703D]/90 hover:shadow-[0_12px_28px_-10px_rgba(179,112,61,0.6)]"
         >
-          Shop the offer
+          View offer
         </Link>
       </div>
 
@@ -185,6 +199,7 @@ function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) 
                 src={offer.image_url}
                 alt={offer.title}
                 fill
+                priority={priority}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
@@ -222,6 +237,58 @@ function CarouselSlide({ offer, currency }: { offer: Offer; currency: string }) 
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Bundle composition for multi-product fixed offers (e.g. Duo), shown on the
+ * promo slide. Everything here is derived from existing offer/product data —
+ * member prices come from `base_price`, and the deal/savings use the offer's
+ * own `discount_value`. Presentation only: the real discount is applied by the
+ * cart engine via `cartDiscount`. Mirrors offers-page `OfferComposition`.
+ */
+function OfferBundle({
+  offer,
+  products,
+  currency,
+}: {
+  offer: Offer;
+  products: CatalogProduct[];
+  currency: string;
+}) {
+  if (offer.applies_to_all) return null;
+  const members = products.filter((p) => offer.offerProductIds.includes(p.id));
+  if (members.length <= 1) return null;
+
+  const normalMinor = members.reduce((sum, p) => sum + toMinor(p.base_price), 0);
+  const showDeal = offer.discount_type === 'fixed';
+  const dealMinor = showDeal ? normalMinor - toMinor(offer.discount_value) : null;
+  const savingsMinor = showDeal ? toMinor(offer.discount_value) : null;
+
+  return (
+    <div className="mt-6 max-w-md rounded-2xl border border-[#B3703D]/40 bg-[#1E100B]/60 p-4">
+      <ul className="space-y-1.5">
+        {members.map((m) => (
+          <li key={m.id} className="flex items-baseline justify-between gap-3 text-sm">
+            <span className="text-[#FFF7EA]">{m.name}</span>
+            <span className="text-[#E7D5C1]/80">{formatMoney(toMinor(m.base_price), currency)}</span>
+          </li>
+        ))}
+      </ul>
+      {dealMinor !== null && savingsMinor !== null && (
+        <p className="mt-3 border-t border-[#B3703D]/40 pt-3 text-sm font-semibold text-[#FFF7EA]">
+          Normal {formatMoney(normalMinor, currency)} · Deal {formatMoney(dealMinor, currency)}
+        </p>
+      )}
+      {savingsMinor !== null && (
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-[#F2B84B]">
+          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Save {formatMoney(savingsMinor, currency)}
+        </p>
+      )}
     </div>
   );
 }

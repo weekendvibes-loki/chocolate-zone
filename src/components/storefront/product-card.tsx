@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { formatMoney, menuWasPriceMinor, toMinor } from '@/lib/pricing/money';
 import { discountLabel, isBundleOffer } from '@/components/storefront/offer-label';
 import { StockIndicator } from '@/components/storefront/stock-indicator';
+import { ProductImageFallback } from '@/components/storefront/product-image-fallback';
 import { useCart } from '@/components/storefront/cart-context';
 import { useToast } from '@/components/admin/toast';
 import type { Offer } from '@/types/domain';
@@ -62,7 +63,7 @@ export function ProductCard({
   };
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-amber-300 hover:shadow-xl">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-[#E7D5C1] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#B3703D]/50 hover:shadow-xl">
       <Link
         href={detailsHref}
         aria-label={product.name}
@@ -74,15 +75,10 @@ export function ProductCard({
             alt={product.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transform-none"
           />
         ) : (
-          <span className="grid h-full w-full place-items-center text-zinc-300">
-            <svg className="size-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="M3 10h18M3 14h18M8 5v4M16 5v4" strokeLinecap="round" />
-            </svg>
-          </span>
+          <ProductImageFallback name={product.name} />
         )}
         {offer && !isBundle ? (
           <span className="absolute left-3 top-3 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-zinc-900 shadow-sm">
@@ -96,13 +92,13 @@ export function ProductCard({
       </Link>
       <div className="flex flex-1 flex-col p-4">
         {categoryName && (
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-amber-600">{categoryName}</span>
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#B3703D]">{categoryName}</span>
         )}
         <Link
           href={detailsHref}
           className="mt-1.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
         >
-          <h3 className="line-clamp-2 min-h-12 font-serif text-base font-semibold leading-snug text-zinc-900 transition-colors group-hover:text-zinc-600">
+          <h3 className="line-clamp-2 min-h-12 font-serif text-base font-semibold leading-snug text-[#2A1710] transition-colors group-hover:text-zinc-600">
             {product.name}
           </h3>
         </Link>
@@ -112,7 +108,12 @@ export function ProductCard({
               {formatMoney(wasMinor, currency)}
             </span>
           )}
-          <span className="text-xl font-bold text-zinc-900">{formatMoney(sellingMinor, currency)}</span>
+          <span className="text-xl font-bold text-[#2A1710]">{formatMoney(sellingMinor, currency)}</span>
+          {wasMinor !== null && (
+            <span className="rounded-full bg-[#F2B84B] px-2 py-0.5 text-[10px] font-bold text-[#3A2417]">
+              10% OFF
+            </span>
+          )}
         </p>
         <div className="mt-1.5">
           <StockIndicator stock={product.stock_qty} />
@@ -121,7 +122,7 @@ export function ProductCard({
           {hasVariants ? (
             <Link
               href={detailsHref}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#2A1710] px-4 py-2.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               Customize & Add
             </Link>
@@ -166,7 +167,7 @@ export function ProductCard({
               type="button"
               onClick={handleAddToCart}
               disabled={outOfStock}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#2A1710] px-4 py-2.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {outOfStock ? 'Out of stock' : 'Add to Cart'}
             </button>

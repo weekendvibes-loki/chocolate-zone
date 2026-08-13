@@ -73,24 +73,24 @@ export function ProductCatalog({
     <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <BackButton />
       <div className="mb-10 max-w-2xl">
-        <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">The collection</span>
-        <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+        <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">The collection</span>
+        <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
           Chocolate &amp; treats
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-zinc-500 sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-[#6B4A33] sm:text-base">
           Small-batch chocolates, indulgent bites and handcrafted treats — made with care and ready to enjoy.
         </p>
       </div>
 
       {activeOffer && (
-        <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center">
+        <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-[#2A1710] bg-[#2A1710] px-5 py-4 sm:flex-row sm:items-center">
           <div className="flex items-start gap-3">
-            <span className="inline-flex shrink-0 items-center rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900">
+            <span className="inline-flex shrink-0 items-center rounded-full bg-[#F2B84B] px-3 py-1 text-xs font-bold text-[#1E100B]">
               {discountLabel(activeOffer, currency)}
             </span>
             <div>
-              <h2 className="font-serif text-lg font-semibold text-zinc-900">{activeOffer.title}</h2>
-              <p className="text-sm text-zinc-600">
+              <h2 className="font-serif text-lg font-semibold text-[#FFF7EA]">{activeOffer.title}</h2>
+              <p className="text-sm text-[#E7D5C1]">
                 Showing treats included in this offer
                 {activeOffer.applies_to_all ? ' — the discount applies to the whole collection.' : '.'}
               </p>
@@ -99,7 +99,7 @@ export function ProductCatalog({
           <button
             type="button"
             onClick={clearFilters}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-amber-800 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#F2B84B] transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
           >
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
               <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -117,7 +117,7 @@ export function ProductCatalog({
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               aria-label="Sort products"
-              className="w-full min-h-11 appearance-none rounded-xl border border-zinc-300 bg-white pl-3 pr-9 text-sm font-medium text-zinc-700 transition-colors focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/30 sm:w-auto"
+              className="w-full min-h-11 appearance-none rounded-xl border border-[#E7D5C1] bg-white pl-3 pr-9 text-sm font-medium text-[#2A1710] transition-colors focus:border-[#B3703D] focus:outline-none focus:ring-2 focus:ring-amber-400/30 sm:w-auto"
             >
               <option value="default">Sort: Recommended</option>
               <option value="name">Name (A – Z)</option>
@@ -139,7 +139,7 @@ export function ProductCatalog({
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 hover:text-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-medium text-[#B3703D] transition-colors hover:bg-[#FFF7EA] hover:text-[#2A1710] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -151,7 +151,7 @@ export function ProductCatalog({
       </div>
 
       <div className="mb-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400">Browse by category</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#7A4E2D]">Browse by category</p>
         <div className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <CategoryChip label="All" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
           {catalog.categories.map((c) => (
@@ -166,7 +166,7 @@ export function ProductCatalog({
         </div>
       </div>
 
-      <p className="mb-5 text-sm text-zinc-500">
+      <p className="mb-5 text-sm font-medium text-[#6B4A33]">
         {visible.length} treat{visible.length === 1 ? '' : 's'}
         {activeCategory ? ` in ${activeCategory.name}` : ''}
         {activeOffer && !activeCategory ? ` in ${activeOffer.title}` : ''}
@@ -214,12 +214,17 @@ function CategoryChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+      className={`flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
         active
           ? 'border-[#2A1710] bg-[#2A1710] text-[#F5E6D5] shadow-sm ring-1 ring-[#F2B84B]/60'
-          : 'border-zinc-200 bg-white text-zinc-600 hover:border-[#B3703D] hover:bg-[#FFF7EA] hover:text-[#2A1710]'
+          : 'border-[#E7D5C1] bg-white text-[#6B4A33] hover:border-[#B3703D] hover:bg-[#FFF7EA] hover:text-[#2A1710]'
       }`}
     >
+      {active && (
+        <svg className="size-4 shrink-0 text-[#F2B84B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+          <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
       {emoji && (
         <span aria-hidden="true" className={active ? 'opacity-90' : ''}>
           {emoji}
@@ -245,14 +250,14 @@ function EmptyResults({
 }) {
   const emptyShelf = !hasFilters && !offerActive;
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-[#fbf7f0] px-6 py-16 text-center">
-      <span className="grid size-14 place-items-center rounded-full bg-amber-100 text-amber-700">
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#E7D5C1] bg-[#FFF7EA] px-6 py-16 text-center">
+      <span className="grid size-14 place-items-center rounded-full bg-[#F2B84B]/25 text-[#B3703D]">
         <svg className="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <circle cx="11" cy="11" r="7" />
           <path d="m21 21-4.35-4.35" strokeLinecap="round" />
         </svg>
       </span>
-      <h3 className="mt-5 font-serif text-xl font-semibold text-zinc-900">
+      <h3 className="mt-5 font-serif text-xl font-semibold text-[#2A1710]">
         {offerActive
           ? 'Nothing in this offer yet'
           : hasQuery
@@ -261,13 +266,13 @@ function EmptyResults({
               ? 'The shelf is empty for now'
               : 'No treats found'}
       </h3>
-      <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">
+      <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#7A4E2D]">
         {offerActive
           ? offerTitle
             ? `“${offerTitle}” has no products attached right now.`
             : 'This offer has no products attached right now.'
           : hasQuery
-            ? 'Try another chocolate, waffle, or brownie.'
+            ? 'Try another search or browse all products.'
             : emptyShelf
               ? 'New treats are being made fresh — check back soon.'
               : 'Try browsing a different category.'}
@@ -276,9 +281,9 @@ function EmptyResults({
         <button
           type="button"
           onClick={onClear}
-          className="mt-6 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+          className="mt-6 rounded-xl bg-[#2A1710] px-5 py-2.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
         >
-          {offerActive ? 'Browse all products' : hasQuery ? 'Clear search' : 'Clear filters'}
+          {offerActive ? 'Browse all products' : hasQuery ? 'Browse all products' : 'Clear filters'}
         </button>
       ) : null}
     </div>
