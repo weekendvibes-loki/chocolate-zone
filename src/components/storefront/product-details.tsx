@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatMoney, toMinor } from '@/lib/pricing/money';
-import { discountLabel } from '@/components/storefront/offer-label';
+import { discountLabel, isBundleOffer } from '@/components/storefront/offer-label';
 import { StockIndicator } from '@/components/storefront/stock-indicator';
 import { ProductCard } from '@/components/storefront/product-card';
 import { useCart } from '@/components/storefront/cart-context';
@@ -128,7 +128,7 @@ export function ProductDetails({
                 </svg>
               </span>
             )}
-            {bestOffer && (
+            {bestOffer && !isBundleOffer(bestOffer) && (
               <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900 shadow-sm">
                 {discountLabel(bestOffer, currency)}
               </span>
@@ -164,7 +164,7 @@ export function ProductDetails({
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <span className="text-3xl font-bold text-zinc-900">{formatMoney(priceMinor, currency)}</span>
-            {bestOffer && (
+            {bestOffer && !isBundleOffer(bestOffer) && (
               <span className="rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-zinc-900">
                 {discountLabel(bestOffer, currency)}
               </span>

@@ -40,6 +40,16 @@ export function formatMoney(minor: Minor, currency: Currency): string {
 
 export const roundHalfUp = (n: number): Minor => Math.round(n);
 
+/**
+ * Storefront "was price" for the standard 10% OFF presentation.
+ * round(base_price / 0.9) in whole rupees → minor units (never fractional).
+ * Purely presentational: base_price (the selling price) is what is sent to
+ * cart/checkout, so no real discount is applied.
+ */
+export function menuWasPriceMinor(priceMinor: Minor): Minor {
+  return Math.round(priceMinor / 100 / 0.9) * 100;
+}
+
 /** percentage discount on a line: single rounding at the LINE level to avoid drift. */
 export function percentOf(minor: Minor, percent: number): Minor {
   return roundHalfUp((minor * percent) / 100);

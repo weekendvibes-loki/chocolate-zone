@@ -70,3 +70,64 @@ export function applyBestOffer(
 export function bestOfferForProduct(offers: OfferRule[], productId: string, now: Date): OfferRule | null {
   return applyBestOffer(100, 1, productId, offers, now).offer;
 }
+
+/** A cart line as seen by the discount layer. */
+export interface DiscountCartLine {
+  productId: string;
+  quantity: number;
+  unitPrice: Minor;
+  offer: OfferRule | null;
+}
+
+/** Total quantity of a product across the given cart lines. */
+function quantityFor(lines: DiscountCartLine[], productId: string): number {
+  return lines.reduce((sum, l) => (l.productId === productId ? sum + l.quantity : sum), 0);
+}
+
+/**
+ * Discount for the cart lines that share ONE offer.
+ *
+ * Existing behavior is preserved exactly for:
+ *  - percentage offers (per-line percentage, as before)
+ *  - fixed offers on a single product or applies_to_all (per-line fixed,
+ *    capped at each line's subtotal, as before)
+ *
+ * Multi-product fixed offers (bundles, offer_products length > 1) apply the
+ * fixed discount ONCE PER COMPLETE QUALIFYING SET across the offer's
+ * products: pairs are matched product-for-product, an incomplete set gets
+ * no discount, and the discount never exceeds the qualifying subtotal.
+ */
+export function offerLinesDiscount(lines: DiscountCartLine[], offer: OfferRule): Minor {
+  if (offer.discount_type === 'percentage') {
+    return lines.reduce((sum, l) => sum + lineDiscount(l.unitPrice, l.quantity, offer), 0);
+  }
+  const fixed = toMinor(offer.discount_value);
+  if (offer.productIds.length > 1) {
+    const sets = Math.min(...offer.productIds.map((pid) => quantityFor(lines, pid)));
+    if (sets <= 0) return 0;
+    const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
+    return Math.min(fixed * sets, subtotal);
+  }
+  return lines.reduce((sum, l) => sum + lineDiscount(l.unitPrice, l.quantity, offer), 0);
+}
+
+/**
+ * Total offer discount for a whole cart. Lines are grouped by their offer
+ * and each offer is priced with {@link offerLinesDiscount}, so bundle
+ * offers are matched across the lines that carry them while all other
+ * offers keep their original per-line behavior.
+ */
+export function cartDiscount(lines: DiscountCartLine[]): Minor {
+  const byOffer = new Map<string, { offer: OfferRule; lines: DiscountCartLine[] }>();
+  for (const line of lines) {
+    if (!line.offer) continue;
+    const entry = byOffer.get(line.offer.id);
+    if (entry) entry.lines.push(line);
+    else byOffer.set(line.offer.id, { offer: line.offer, lines: [line] });
+  }
+  let total = 0;
+  for (const { offer, lines: offerLines } of byOffer.values()) {
+    total += offerLinesDiscount(offerLines, offer);
+  }
+  return total;
+}

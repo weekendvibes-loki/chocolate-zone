@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { toOfferRule } from '@/lib/services/mappers';
-import { lineDiscount } from '@/lib/pricing/discount';
+import { cartDiscount } from '@/lib/pricing/discount';
 import type { Offer } from '@/types/domain';
 
 export interface CartItem {
@@ -146,14 +146,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const summary = useMemo<CartSummary>(() => {
     let itemCount = 0;
     let subtotal = 0;
-    let discount = 0;
     for (const item of items) {
       itemCount += item.quantity;
       subtotal += item.unitPrice * item.quantity;
-      if (item.offer) {
-        discount += lineDiscount(item.unitPrice, item.quantity, toOfferRule(item.offer));
-      }
     }
+    const discount = cartDiscount(
+      items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        offer: item.offer ? toOfferRule(item.offer) : null,
+      })),
+    );
     return { itemCount, subtotal, discount, total: subtotal - discount };
   }, [items]);
 

@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatMoney, toMinor } from '@/lib/pricing/money';
-import { discountLabel } from '@/components/storefront/offer-label';
+import { formatMoney, menuWasPriceMinor, toMinor } from '@/lib/pricing/money';
+import { discountLabel, isBundleOffer } from '@/components/storefront/offer-label';
 import { StockIndicator } from '@/components/storefront/stock-indicator';
 import { useCart } from '@/components/storefront/cart-context';
 import { useToast } from '@/components/admin/toast';
@@ -34,6 +34,9 @@ export function ProductCard({
   const { toast } = useToast();
   const detailsHref = `/products/${product.id}`;
   const outOfStock = product.stock_qty === 0;
+  const sellingMinor = toMinor(product.base_price);
+  const isBundle = offer !== null && isBundleOffer(offer);
+  const wasMinor = offer && !isBundle ? null : menuWasPriceMinor(sellingMinor);
 
   const handleAddToCart = () => {
     addItem({
@@ -72,9 +75,13 @@ export function ProductCard({
             </svg>
           </span>
         )}
-        {offer && (
+        {offer && !isBundle ? (
           <span className="absolute left-3 top-3 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-zinc-900 shadow-sm">
             {discountLabel(offer, currency)}
+          </span>
+        ) : (
+          <span className="absolute left-3 top-3 rounded-full bg-[#F2B84B] px-2.5 py-1 text-[11px] font-bold text-[#3A2417] shadow-sm">
+            10% OFF
           </span>
         )}
       </Link>
@@ -90,7 +97,14 @@ export function ProductCard({
             {product.name}
           </h3>
         </Link>
-        <p className="mt-2 text-lg font-bold text-zinc-900">{formatMoney(toMinor(product.base_price), currency)}</p>
+        <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
+          {wasMinor !== null && (
+            <span className="text-sm font-medium text-zinc-400 line-through">
+              {formatMoney(wasMinor, currency)}
+            </span>
+          )}
+          <span className="text-lg font-bold text-zinc-900">{formatMoney(sellingMinor, currency)}</span>
+        </p>
         <div className="mt-1.5">
           <StockIndicator stock={product.stock_qty} />
         </div>
