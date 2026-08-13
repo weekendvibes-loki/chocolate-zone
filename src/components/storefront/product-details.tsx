@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatMoney, toMinor } from '@/lib/pricing/money';
+import { formatMoney, menuWasPriceMinor, toMinor } from '@/lib/pricing/money';
 import { discountLabel, isBundleOffer } from '@/components/storefront/offer-label';
 import { StockIndicator } from '@/components/storefront/stock-indicator';
 import { ProductCard } from '@/components/storefront/product-card';
@@ -69,17 +69,24 @@ export function ProductDetails({
 
   const outOfStock = product.stock_qty === 0;
 
+  const isBundle = bestOffer !== null && isBundleOffer(bestOffer);
+  const wasMinor = bestOffer && !isBundle ? null : menuWasPriceMinor(priceMinor);
+
+  const [quantity, setQuantity] = useState(1);
+
   const handleAddToCart = () => {
-    addItem({
-      productId: product.id,
-      productName: product.name,
-      imageUrl: product.image_url,
-      variantIds: selectedVariants.map((v) => v.id),
-      variantLabel,
-      unitPrice: priceMinor,
-      offer: bestOffer,
-      currency,
-    });
+    for (let i = 0; i < quantity; i += 1) {
+      addItem({
+        productId: product.id,
+        productName: product.name,
+        imageUrl: product.image_url,
+        variantIds: selectedVariants.map((v) => v.id),
+        variantLabel,
+        unitPrice: priceMinor,
+        offer: bestOffer,
+        currency,
+      });
+    }
     toast('success', 'Added to cart');
     openCart();
   };
@@ -128,9 +135,13 @@ export function ProductDetails({
                 </svg>
               </span>
             )}
-            {bestOffer && !isBundleOffer(bestOffer) && (
+            {bestOffer && !isBundle ? (
               <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900 shadow-sm">
                 {discountLabel(bestOffer, currency)}
+              </span>
+            ) : (
+              <span className="absolute left-4 top-4 rounded-full bg-[#F2B84B] px-3 py-1 text-xs font-bold text-[#3A2417] shadow-sm">
+                10% OFF
               </span>
             )}
           </div>
@@ -162,12 +173,17 @@ export function ProductDetails({
             {product.name}
           </h1>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <span className="text-3xl font-bold text-zinc-900">{formatMoney(priceMinor, currency)}</span>
-            {bestOffer && !isBundleOffer(bestOffer) && (
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+            {wasMinor !== null && (
+              <span className="text-lg font-medium text-zinc-400 line-through">{formatMoney(wasMinor, currency)}</span>
+            )}
+            <span className="text-3xl font-bold text-zinc-900 sm:text-4xl">{formatMoney(priceMinor, currency)}</span>
+            {bestOffer && !isBundle ? (
               <span className="rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-zinc-900">
                 {discountLabel(bestOffer, currency)}
               </span>
+            ) : (
+              <span className="rounded-full bg-[#F2B84B] px-2.5 py-1 text-xs font-bold text-[#3A2417]">10% OFF</span>
             )}
           </div>
           {deltaMinor !== 0 && (
@@ -222,11 +238,43 @@ export function ProductDetails({
             </div>
           )}
 
+          <div className="mt-7 flex items-center gap-3">
+            <span className="text-sm font-semibold text-zinc-900">Qty</span>
+            <div className="inline-flex items-center overflow-hidden rounded-xl border border-zinc-300 bg-white">
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={outOfStock || quantity <= 1}
+                aria-label="Decrease quantity"
+                className="grid size-11 place-items-center text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M5 12h14" strokeLinecap="round" />
+                </svg>
+              </button>
+              <span className="grid w-12 place-items-center text-sm font-bold text-zinc-900" aria-live="polite">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.min(9, q + 1))}
+                disabled={outOfStock || quantity >= 9}
+                aria-label="Increase quantity"
+                className="grid size-11 place-items-center text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <span className="text-sm text-zinc-500">× {formatMoney(priceMinor, currency)}</span>
+          </div>
+
           <button
             type="button"
             onClick={handleAddToCart}
             disabled={outOfStock}
-            className="mt-8 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
+            className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
           >
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
               <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />

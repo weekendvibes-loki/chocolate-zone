@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { BackButton } from '@/components/storefront/back-button';
 import { discountLabel } from '@/components/storefront/offer-label';
+import { formatMoney, toMinor } from '@/lib/pricing/money';
 import type { Catalog, Offer } from '@/types/domain';
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -26,6 +28,7 @@ export function OffersPage({ catalog }: { catalog: Catalog }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+      <BackButton />
       <div className="mb-12 max-w-2xl">
         <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">Special offers</span>
         <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
@@ -72,6 +75,7 @@ export function OffersPage({ catalog }: { catalog: Catalog }) {
                   {offer.description && (
                     <p className="mt-2 line-clamp-3 text-sm leading-6 text-zinc-600">{offer.description}</p>
                   )}
+                  <OfferComposition offer={offer} catalog={catalog} currency={currency} />
                   <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
                     {validity ? (
                       <span className="text-xs font-medium text-zinc-500">{validity}</span>
@@ -97,6 +101,43 @@ export function OffersPage({ catalog }: { catalog: Catalog }) {
             );
           })}
         </div>
+      )}
+    </div>
+  );
+}
+
+function OfferComposition({
+  offer,
+  catalog,
+  currency,
+}: {
+  offer: Offer;
+  catalog: Catalog;
+  currency: string;
+}) {
+  if (offer.applies_to_all) return null;
+  const members = catalog.products.filter((p) => offer.offerProductIds.includes(p.id));
+  const isBundle = members.length > 1;
+  if (!isBundle) return null;
+
+  const normalMinor = members.reduce((sum, p) => sum + toMinor(p.base_price), 0);
+  const showDeal = offer.discount_type === 'fixed';
+  const dealMinor = showDeal ? normalMinor - toMinor(offer.discount_value) : null;
+
+  return (
+    <div className="mt-4 rounded-xl border border-[#E7D5C1]/70 bg-[#FFF7EA] px-4 py-3">
+      <ul className="space-y-1.5">
+        {members.map((m) => (
+          <li key={m.id} className="flex items-baseline justify-between gap-3 text-sm">
+            <span className="font-medium text-[#2A1710]">{m.name}</span>
+            <span className="text-[#7A4E2D]">{formatMoney(toMinor(m.base_price), currency)}</span>
+          </li>
+        ))}
+      </ul>
+      {dealMinor !== null && (
+        <p className="mt-2.5 border-t border-[#E7D5C1] pt-2.5 text-sm font-semibold text-[#2A1710]">
+          Normal {formatMoney(normalMinor, currency)} · Deal {formatMoney(dealMinor, currency)}
+        </p>
       )}
     </div>
   );

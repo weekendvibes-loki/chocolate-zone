@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { SearchBox } from '@/components/admin/search-box';
 import { ProductCard } from '@/components/storefront/product-card';
+import { BackButton } from '@/components/storefront/back-button';
 import { discountLabel } from '@/components/storefront/offer-label';
 import { toMinor } from '@/lib/pricing/money';
 import type { Catalog, Offer } from '@/types/domain';
@@ -70,6 +71,7 @@ export function ProductCatalog({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+      <BackButton />
       <div className="mb-10 max-w-2xl">
         <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">The collection</span>
         <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
@@ -235,6 +237,7 @@ function EmptyResults({
   offerTitle: string | null;
   onClear: () => void;
 }) {
+  const emptyShelf = !hasFilters && !offerActive;
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-[#fbf7f0] px-6 py-16 text-center">
       <span className="grid size-14 place-items-center rounded-full bg-amber-100 text-amber-700">
@@ -244,18 +247,18 @@ function EmptyResults({
         </svg>
       </span>
       <h3 className="mt-5 font-serif text-xl font-semibold text-zinc-900">
-        {offerActive ? 'Nothing in this offer yet' : 'No treats found'}
+        {offerActive ? 'Nothing in this offer yet' : emptyShelf ? 'The shelf is empty for now' : 'No treats found'}
       </h3>
       <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">
         {offerActive
           ? offerTitle
             ? `“${offerTitle}” has no products attached right now.`
             : 'This offer has no products attached right now.'
-          : hasFilters
-            ? 'Try another search or browse a different category.'
-            : 'No products are available right now.'}
+          : emptyShelf
+            ? 'New treats are being made fresh — check back soon.'
+            : 'Try another search or browse a different category.'}
       </p>
-      {onClear && (
+      {offerActive || hasFilters ? (
         <button
           type="button"
           onClick={onClear}
@@ -263,7 +266,7 @@ function EmptyResults({
         >
           {offerActive ? 'Browse all products' : 'Clear filters'}
         </button>
-      )}
+      ) : null}
     </div>
   );
 }

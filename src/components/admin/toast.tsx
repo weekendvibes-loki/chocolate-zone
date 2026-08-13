@@ -31,8 +31,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const toast = useCallback(
     (kind: ToastKind, message: string) => {
+      // Re-adding an identical toast (e.g. rapid "Added to cart" clicks) refreshes
+      // it instead of stacking a second snackbar, so the feedback never doubles up.
       const id = ++nextId.current;
-      setToasts((prev) => [...prev, { id, kind, message }]);
+      setToasts((prev) => [
+        ...prev.filter((t) => !(t.kind === kind && t.message === message)),
+        { id, kind, message },
+      ]);
       window.setTimeout(() => dismiss(id), 4000);
     },
     [dismiss],
@@ -43,18 +48,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed right-4 top-4 z-[80] flex w-full max-w-sm flex-col items-end gap-2">
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[80] flex w-full flex-col items-center gap-2 px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] lg:items-end lg:pb-6 lg:pr-6">
         {toasts.map((t) => (
           <div
             key={t.id}
             role="status"
-            className={`pointer-events-auto flex w-full items-start gap-3 rounded-xl border bg-white px-4 py-3 shadow-lg ${
-              t.kind === 'success' ? 'border-emerald-200' : 'border-red-200'
+            className={`pointer-events-auto flex w-full max-w-sm animate-[toast-in_0.3s_ease-out] items-start gap-3 rounded-2xl border border-white/10 bg-[#2A1710]/95 px-4 py-3 text-[#F5E6D5] shadow-[0_18px_50px_-12px_rgba(0,0,0,0.65)] backdrop-blur-xl ${
+              t.kind === 'success' ? 'border-[#F2B84B]/40' : 'border-red-500/40'
             }`}
           >
             <span
               className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-full ${
-                t.kind === 'success' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'
+                t.kind === 'success' ? 'bg-[#F2B84B] text-[#1E100B]' : 'bg-red-500/90 text-white'
               }`}
             >
               {t.kind === 'success' ? (
@@ -67,12 +72,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 </svg>
               )}
             </span>
-            <p className="flex-1 text-sm text-zinc-700">{t.message}</p>
+            <p className="flex-1 text-sm text-[#F5E6D5]">{t.message}</p>
             <button
               type="button"
               onClick={() => dismiss(t.id)}
               aria-label="Dismiss notification"
-              className="text-zinc-400 transition-colors hover:text-zinc-700"
+              className="text-[#E7D5C1]/60 transition-colors hover:text-[#F2B84B]"
             >
               <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />

@@ -1,5 +1,5 @@
 import { getCatalog } from '@/lib/services/catalog';
-import { EmptyState } from '@/components/admin/empty-state';
+import { StorefrontErrorState } from '@/components/storefront/error-state';
 import { ProductCatalog } from '@/components/storefront/product-catalog';
 import { OrdersClosedBanner } from '@/components/storefront/orders-closed-banner';
 import type { Catalog } from '@/types/domain';
@@ -19,9 +19,10 @@ export default async function ProductsPage({
   if (!catalog) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <EmptyState
-          title="We couldn't load the products"
-          description="Something went wrong while fetching the catalog. Please try again in a moment."
+        <StorefrontErrorState
+          title="The treats couldn't be loaded"
+          description="Something went wrong while fetching the collection. Please try again in a moment."
+          backLabel="Back to menu"
         />
       </div>
     );

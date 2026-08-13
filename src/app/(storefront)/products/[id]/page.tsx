@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import { getProductDetail } from '@/lib/services/products';
 import { getCatalog } from '@/lib/services/catalog';
-import { EmptyState } from '@/components/admin/empty-state';
+import { StorefrontErrorState } from '@/components/storefront/error-state';
 import { ProductDetails } from '@/components/storefront/product-details';
 import type { Catalog, ProductDetail } from '@/types/domain';
 
@@ -29,19 +28,12 @@ export default async function ProductDetailPage({
   if (!catalog || !detail) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <EmptyState
-          variant="search"
+        <StorefrontErrorState
           title="Product not available"
           description="We couldn't find this product. It may have been removed or is no longer active."
+          backHref="/products"
+          backLabel="Back to products"
         />
-        <div className="mt-6 text-center">
-          <Link
-            href="/products"
-            className="inline-flex rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
-          >
-            Back to products
-          </Link>
-        </div>
       </div>
     );
   }
