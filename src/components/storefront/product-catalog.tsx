@@ -110,7 +110,7 @@ export function ProductCatalog({
       )}
 
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <SearchBox value={query} onChange={setQuery} placeholder="Search the collection…" />
+        <SearchBox value={query} onChange={setQuery} placeholder="Search the collection…" tone="amber" clearable />
         <div className="flex items-center gap-2">
           <div className="relative">
             <select
@@ -150,17 +150,20 @@ export function ProductCatalog({
         </div>
       </div>
 
-      <div className="-mx-4 mb-8 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <CategoryChip label="All" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
-        {catalog.categories.map((c) => (
-          <CategoryChip
-            key={c.id}
-            label={c.name}
-            emoji={c.emoji}
-            active={categoryId === c.id}
-            onClick={() => setCategoryId(c.id)}
-          />
-        ))}
+      <div className="mb-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400">Browse by category</p>
+        <div className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <CategoryChip label="All" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
+          {catalog.categories.map((c) => (
+            <CategoryChip
+              key={c.id}
+              label={c.name}
+              emoji={c.emoji}
+              active={categoryId === c.id}
+              onClick={() => setCategoryId(c.id)}
+            />
+          ))}
+        </div>
       </div>
 
       <p className="mb-5 text-sm text-zinc-500">
@@ -172,6 +175,7 @@ export function ProductCatalog({
       {visible.length === 0 ? (
         <EmptyResults
           hasFilters={hasFilters}
+          hasQuery={query.trim() !== ''}
           offerActive={Boolean(activeOffer)}
           offerTitle={activeOffer?.title ?? null}
           onClear={clearFilters}
@@ -212,8 +216,8 @@ function CategoryChip({
       aria-pressed={active}
       className={`flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
         active
-          ? 'border-zinc-900 bg-zinc-900 text-white shadow-sm'
-          : 'border-zinc-300 bg-white text-zinc-600 hover:border-zinc-900 hover:text-zinc-900'
+          ? 'border-[#2A1710] bg-[#2A1710] text-[#F5E6D5] shadow-sm ring-1 ring-[#F2B84B]/60'
+          : 'border-zinc-200 bg-white text-zinc-600 hover:border-[#B3703D] hover:bg-[#FFF7EA] hover:text-[#2A1710]'
       }`}
     >
       {emoji && (
@@ -228,11 +232,13 @@ function CategoryChip({
 
 function EmptyResults({
   hasFilters,
+  hasQuery,
   offerActive,
   offerTitle,
   onClear,
 }: {
   hasFilters: boolean;
+  hasQuery: boolean;
   offerActive: boolean;
   offerTitle: string | null;
   onClear: () => void;
@@ -247,16 +253,24 @@ function EmptyResults({
         </svg>
       </span>
       <h3 className="mt-5 font-serif text-xl font-semibold text-zinc-900">
-        {offerActive ? 'Nothing in this offer yet' : emptyShelf ? 'The shelf is empty for now' : 'No treats found'}
+        {offerActive
+          ? 'Nothing in this offer yet'
+          : hasQuery
+            ? 'No chocolates found'
+            : emptyShelf
+              ? 'The shelf is empty for now'
+              : 'No treats found'}
       </h3>
       <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">
         {offerActive
           ? offerTitle
             ? `“${offerTitle}” has no products attached right now.`
             : 'This offer has no products attached right now.'
-          : emptyShelf
-            ? 'New treats are being made fresh — check back soon.'
-            : 'Try another search or browse a different category.'}
+          : hasQuery
+            ? 'Try another chocolate, waffle, or brownie.'
+            : emptyShelf
+              ? 'New treats are being made fresh — check back soon.'
+              : 'Try browsing a different category.'}
       </p>
       {offerActive || hasFilters ? (
         <button
@@ -264,7 +278,7 @@ function EmptyResults({
           onClick={onClear}
           className="mt-6 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
         >
-          {offerActive ? 'Browse all products' : 'Clear filters'}
+          {offerActive ? 'Browse all products' : hasQuery ? 'Clear search' : 'Clear filters'}
         </button>
       ) : null}
     </div>

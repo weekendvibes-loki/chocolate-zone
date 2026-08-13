@@ -30,13 +30,15 @@ export function ProductCard({
   hasVariants?: boolean;
   categoryName?: string;
 }) {
-  const { addItem } = useCart();
+  const { addItem, items, updateQuantity, removeItem } = useCart();
   const { toast } = useToast();
   const detailsHref = `/products/${product.id}`;
   const outOfStock = product.stock_qty === 0;
   const sellingMinor = toMinor(product.base_price);
   const isBundle = offer !== null && isBundleOffer(offer);
   const wasMinor = offer && !isBundle ? null : menuWasPriceMinor(sellingMinor);
+
+  const cartItem = items.find((i) => i.key === product.id);
 
   const handleAddToCart = () => {
     addItem({
@@ -50,6 +52,13 @@ export function ProductCard({
       currency,
     });
     toast('success', 'Added to cart');
+  };
+
+  const handleQuantityChange = (delta: number) => {
+    if (!cartItem) return;
+    const next = cartItem.quantity + delta;
+    if (next <= 0) removeItem(cartItem.key);
+    else updateQuantity(cartItem.key, next);
   };
 
   return (
@@ -103,7 +112,7 @@ export function ProductCard({
               {formatMoney(wasMinor, currency)}
             </span>
           )}
-          <span className="text-lg font-bold text-zinc-900">{formatMoney(sellingMinor, currency)}</span>
+          <span className="text-xl font-bold text-zinc-900">{formatMoney(sellingMinor, currency)}</span>
         </p>
         <div className="mt-1.5">
           <StockIndicator stock={product.stock_qty} />
@@ -116,6 +125,42 @@ export function ProductCard({
             >
               Customize & Add
             </Link>
+          ) : cartItem ? (
+            <div
+              role="group"
+              aria-label={`Quantity for ${product.name}`}
+              className="flex w-full animate-[stepper-in_0.25s_ease-out] items-center justify-center gap-2.5 motion-reduce:animate-none"
+            >
+              <button
+                type="button"
+                onClick={() => handleQuantityChange(-1)}
+                aria-label="Decrease quantity"
+                className="grid size-11 shrink-0 place-items-center rounded-xl border border-[#E7D5C1] bg-[#FFF7EA] text-[#B3703D] transition-colors hover:border-[#F2B84B] hover:bg-[#F2B84B]/25 hover:text-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 active:bg-[#F2B84B]/50"
+              >
+                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                  <path d="M5 12h14" strokeLinecap="round" />
+                </svg>
+              </button>
+              <span
+                aria-live="polite"
+                className="flex h-11 items-center justify-center gap-1 rounded-xl border border-[#E7D5C1] bg-[#FFF7EA] px-3"
+              >
+                <svg className="size-3.5 text-[#B3703D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span className="text-base font-bold text-[#2A1710]">{cartItem.quantity}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => handleQuantityChange(1)}
+                aria-label="Increase quantity"
+                className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#2A1710] text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 active:bg-[#1E100B]/90"
+              >
+                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
           ) : (
             <button
               type="button"

@@ -98,28 +98,32 @@ export function CartDrawer() {
                     {item.variantLabel && <p className="mt-0.5 text-xs text-zinc-500">{item.variantLabel}</p>}
                     <p className="mt-0.5 text-xs text-zinc-500">{formatMoney(item.unitPrice, c)} each</p>
                     <div className="mt-2 flex items-center gap-3">
-                      <div className="inline-flex items-center rounded-lg border border-zinc-300">
+                      <div className="inline-flex items-center overflow-hidden rounded-lg border border-[#E7D5C1] bg-white">
                         <button
                           type="button"
                           onClick={() =>
                             item.quantity > 1 ? updateQuantity(item.key, item.quantity - 1) : removeItem(item.key)
                           }
                           aria-label="Decrease quantity"
-                          className="grid size-8 place-items-center text-zinc-600 transition-colors hover:text-zinc-900"
+                          className="grid size-9 place-items-center text-[#B3703D] transition-colors hover:bg-[#FFF7EA] hover:text-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500"
                         >
-                          −
+                          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <path d="M5 12h14" strokeLinecap="round" />
+                          </svg>
                         </button>
-                        <span className="w-8 text-center text-sm font-semibold text-zinc-900">{item.quantity}</span>
+                        <span className="w-9 text-center text-sm font-bold text-[#2A1710]">{item.quantity}</span>
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.key, item.quantity + 1)}
                           aria-label="Increase quantity"
-                          className="grid size-8 place-items-center text-zinc-600 transition-colors hover:text-zinc-900"
+                          className="grid size-9 place-items-center text-[#2A1710] transition-colors hover:bg-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500"
                         >
-                          +
+                          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+                          </svg>
                         </button>
                       </div>
-                      <span className="ml-auto text-sm font-bold text-zinc-900">
+                      <span className="ml-auto text-sm font-bold text-[#2A1710]">
                         {formatMoney(item.unitPrice * item.quantity, c)}
                       </span>
                     </div>
@@ -127,22 +131,32 @@ export function CartDrawer() {
                 </li>
               ))}
             </ul>
-            <div className="border-t border-zinc-200 px-5 py-4">
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between text-zinc-600">
+            <div className="border-t border-zinc-200 bg-[#FFF7EA]/60 px-5 py-4">
+              <div className="space-y-2.5 text-sm">
+                <div className="flex items-center justify-between text-zinc-500">
                   <span>Subtotal</span>
                   <span className="font-medium text-zinc-900">{formatMoney(summary.subtotal, c)}</span>
                 </div>
                 {summary.discount > 0 && (
                   <div className="flex items-center justify-between text-zinc-600">
                     <span>Discount</span>
-                    <span className="font-medium text-emerald-600">− {formatMoney(summary.discount, c)}</span>
+                    <span className="font-semibold text-emerald-600">− {formatMoney(summary.discount, c)}</span>
                   </div>
                 )}
-                <div className="flex items-center justify-between border-t border-zinc-100 pt-2 text-base font-bold text-zinc-900">
-                  <span>Total</span>
-                  <span>{formatMoney(summary.total, c)}</span>
+                <div className="flex items-center justify-between border-t border-[#E7D5C1] pt-2.5">
+                  <span className="font-serif text-base font-semibold text-[#2A1710]">Total</span>
+                  <span className="font-serif text-xl font-bold text-[#2A1710]">
+                    {formatMoney(summary.total, c)}
+                  </span>
                 </div>
+                {summary.discount > 0 && (
+                  <p className="flex items-center gap-1.5 pt-0.5 text-xs font-medium text-emerald-600">
+                    <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    You save {formatMoney(summary.discount, c)} on this order
+                  </p>
+                )}
               </div>
               <button
                 type="button"
@@ -150,9 +164,10 @@ export function CartDrawer() {
                   closeCart();
                   router.push('/checkout');
                 }}
-                className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+                className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2A1710] px-6 py-3 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
               >
-                Proceed to Checkout · {formatMoney(summary.total, c)}
+                Proceed to Checkout
+                <span className="font-bold text-[#F2B84B]">· {formatMoney(summary.total, c)}</span>
               </button>
             </div>
           </>

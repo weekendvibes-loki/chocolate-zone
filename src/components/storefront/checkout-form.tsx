@@ -222,8 +222,8 @@ export function CheckoutForm({
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-5 lg:gap-10">
-        <form onSubmit={handleSubmit} noValidate className="space-y-6 lg:col-span-3">
+      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-5 lg:gap-10">
+        <form onSubmit={handleSubmit} noValidate className="order-2 space-y-6 lg:order-1 lg:col-span-3">
           <CheckoutSection number={1} title="Your details" hint="How can we reach you about this order?">
             <div>
               <label htmlFor="checkout-name" className={labelClass}>
@@ -443,7 +443,7 @@ export function CheckoutForm({
           </div>
         </form>
 
-        <aside className="lg:col-span-2">
+        <aside className="order-1 lg:order-2 lg:col-span-2">
           <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm lg:sticky lg:top-24">
             <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4">
               <h2 className="font-serif text-lg font-semibold text-zinc-900">Order Summary</h2>

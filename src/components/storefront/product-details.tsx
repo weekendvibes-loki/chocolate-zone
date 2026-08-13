@@ -39,7 +39,7 @@ export function ProductDetails({
   const currency = catalog.shop.currency;
   const offersById = useMemo(() => new Map(catalog.offers.map((o) => [o.id, o])), [catalog.offers]);
   const categoriesById = useMemo(() => new Map(catalog.categories.map((c) => [c.id, c])), [catalog.categories]);
-  const { addItem, openCart } = useCart();
+  const { addItem, openCart, items } = useCart();
   const { toast } = useToast();
 
   const groups = useMemo(() => groupVariants(variants), [variants]);
@@ -73,6 +73,10 @@ export function ProductDetails({
   const wasMinor = bestOffer && !isBundle ? null : menuWasPriceMinor(priceMinor);
 
   const [quantity, setQuantity] = useState(1);
+
+  const inCartQty = items
+    .filter((i) => i.productId === product.id)
+    .reduce((sum, i) => sum + i.quantity, 0);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i += 1) {
@@ -238,49 +242,59 @@ export function ProductDetails({
             </div>
           )}
 
-          <div className="mt-7 flex items-center gap-3">
-            <span className="text-sm font-semibold text-zinc-900">Qty</span>
-            <div className="inline-flex items-center overflow-hidden rounded-xl border border-zinc-300 bg-white">
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                disabled={outOfStock || quantity <= 1}
-                aria-label="Decrease quantity"
-                className="grid size-11 place-items-center text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M5 12h14" strokeLinecap="round" />
-                </svg>
-              </button>
-              <span className="grid w-12 place-items-center text-sm font-bold text-zinc-900" aria-live="polite">
-                {quantity}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => Math.min(9, q + 1))}
-                disabled={outOfStock || quantity >= 9}
-                aria-label="Increase quantity"
-                className="grid size-11 place-items-center text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-                </svg>
-              </button>
+          <div className="mt-7">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold text-zinc-900">Quantity</span>
+              <div className="inline-flex items-center overflow-hidden rounded-xl border border-[#E7D5C1] bg-white">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={outOfStock || quantity <= 1}
+                  aria-label="Decrease quantity"
+                  className="grid size-11 place-items-center text-[#B3703D] transition-colors hover:bg-[#FFF7EA] hover:text-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M5 12h14" strokeLinecap="round" />
+                  </svg>
+                </button>
+                <span className="grid w-12 place-items-center text-base font-bold text-[#2A1710]" aria-live="polite">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.min(9, q + 1))}
+                  disabled={outOfStock || quantity >= 9}
+                  aria-label="Increase quantity"
+                  className="grid size-11 place-items-center text-[#2A1710] transition-colors hover:bg-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+              <span className="text-sm text-zinc-500">× {formatMoney(priceMinor, currency)}</span>
             </div>
-            <span className="text-sm text-zinc-500">× {formatMoney(priceMinor, currency)}</span>
+            {inCartQty > 0 && (
+              <p className="mt-2.5 flex items-center gap-1.5 text-sm font-medium text-[#B3703D]">
+                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {inCartQty} in your cart
+              </p>
+            )}
           </div>
 
           <button
             type="button"
             onClick={handleAddToCart}
             disabled={outOfStock}
-            className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
+            className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2A1710] px-6 py-3.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
           >
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
               <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
               <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
             </svg>
-            {outOfStock ? 'Out of stock' : 'Add to Cart'}
+            {outOfStock ? 'Out of stock' : quantity > 1 ? `Add ${quantity} to Cart` : 'Add to Cart'}
           </button>
         </div>
       </div>
