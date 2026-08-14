@@ -91,17 +91,19 @@ export function ProductCard({
         )}
       </Link>
       <div className="flex flex-1 flex-col p-4">
-        {categoryName && (
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#B3703D]">{categoryName}</span>
-        )}
         <Link
           href={detailsHref}
-          className="mt-1.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+          className="mt-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
         >
           <h3 className="line-clamp-2 min-h-12 font-serif text-base font-semibold leading-snug text-[#2A1710] transition-colors group-hover:text-zinc-600">
             {product.name}
           </h3>
         </Link>
+        {categoryName && (
+          <span className="mt-1 block text-[11px] font-semibold uppercase tracking-widest text-[#B3703D]">
+            {categoryName}
+          </span>
+        )}
         <p className="mt-2 flex flex-wrap items-baseline gap-x-2">
           {wasMinor !== null && (
             <span className="text-sm font-medium text-zinc-400 line-through">

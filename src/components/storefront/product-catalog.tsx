@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { SearchBox } from '@/components/admin/search-box';
 import { ProductCard } from '@/components/storefront/product-card';
 import { BackButton } from '@/components/storefront/back-button';
 import { discountLabel } from '@/components/storefront/offer-label';
@@ -109,8 +108,28 @@ export function ProductCatalog({
         </div>
       )}
 
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <SearchBox value={query} onChange={setQuery} placeholder="Search the collection…" tone="amber" clearable />
+      <div className="mb-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#7A4E2D]">Browse by category</p>
+        <div className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <CategoryChip label="All" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
+          {catalog.categories.map((c) => (
+            <CategoryChip
+              key={c.id}
+              label={c.name}
+              emoji={c.emoji}
+              active={categoryId === c.id}
+              onClick={() => setCategoryId(c.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm font-medium text-[#6B4A33]">
+          {visible.length} treat{visible.length === 1 ? '' : 's'}
+          {activeCategory ? ` in ${activeCategory.name}` : ''}
+          {activeOffer && !activeCategory ? ` in ${activeOffer.title}` : ''}
+        </p>
         <div className="flex items-center gap-2">
           <div className="relative">
             <select
@@ -149,28 +168,6 @@ export function ProductCatalog({
           )}
         </div>
       </div>
-
-      <div className="mb-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#7A4E2D]">Browse by category</p>
-        <div className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <CategoryChip label="All" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
-          {catalog.categories.map((c) => (
-            <CategoryChip
-              key={c.id}
-              label={c.name}
-              emoji={c.emoji}
-              active={categoryId === c.id}
-              onClick={() => setCategoryId(c.id)}
-            />
-          ))}
-        </div>
-      </div>
-
-      <p className="mb-5 text-sm font-medium text-[#6B4A33]">
-        {visible.length} treat{visible.length === 1 ? '' : 's'}
-        {activeCategory ? ` in ${activeCategory.name}` : ''}
-        {activeOffer && !activeCategory ? ` in ${activeOffer.title}` : ''}
-      </p>
 
       {visible.length === 0 ? (
         <EmptyResults
