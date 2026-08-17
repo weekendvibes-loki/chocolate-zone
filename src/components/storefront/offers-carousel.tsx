@@ -168,8 +168,8 @@ function CarouselSlide({
   priority: boolean;
 }) {
   return (
-    <div className="grid w-full min-w-0 items-center gap-8 lg:grid-cols-2 lg:gap-16">
-      <div className="order-2 min-w-0 lg:order-1">
+    <div className="grid w-full min-w-0 gap-8 lg:grid-cols-2 lg:gap-16">
+      <div className="order-2 min-w-0 min-h-[340px] lg:order-1 lg:flex lg:h-[500px] lg:min-h-0 lg:flex-col lg:justify-center">
         <span className="inline-flex items-center rounded-full border border-[#B3703D]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">
           Limited offer
         </span>
@@ -192,7 +192,7 @@ function CarouselSlide({
       </div>
 
       <div className="order-1 min-w-0 lg:order-2">
-        <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden rounded-3xl ring-1 ring-[#F2B84B]/15 shadow-2xl">
+        <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden rounded-3xl ring-1 ring-[#F2B84B]/15 shadow-2xl lg:aspect-auto lg:h-[500px]">
           {offer.image_url ? (
             <>
               <Image
