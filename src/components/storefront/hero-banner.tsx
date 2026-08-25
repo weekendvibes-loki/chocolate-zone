@@ -53,7 +53,7 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
                   src={offer.image_url}
                   alt={offer.title}
                   fill
-                  priority
+                  preload
                   sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 45vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
                 />
