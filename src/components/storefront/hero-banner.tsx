@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Catalog } from '@/types/domain';
-import { discountLabel } from '@/components/storefront/offer-label';
 
 export function HeroBanner({ catalog }: { catalog: Catalog }) {
-  const currency = catalog.shop.currency;
   const offer = catalog.offers.find((o) => o.image_url) ?? catalog.offers[0] ?? null;
 
   return (
@@ -61,10 +59,7 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
 
         <div className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
           {offer ? (
-            <Link
-              href={`/products?offer=${encodeURIComponent(offer.id)}`}
-              className="group relative block aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl ring-1 ring-zinc-900/10 transition-shadow hover:shadow-2xl lg:aspect-[5/6]"
-            >
+            <div className="group relative block aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl ring-1 ring-zinc-900/10 transition-shadow hover:shadow-2xl lg:aspect-[5/6]">
               {offer.image_url ? (
                 <Image
                   src={offer.image_url}
@@ -81,21 +76,7 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
                   </span>
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1E100B]/80 via-transparent to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <span className="inline-flex rounded-full bg-[#F2B84B] px-2.5 py-1 text-xs font-bold text-[#1E100B]">
-                  {discountLabel(offer, currency)}
-                </span>
-                <h2 className="mt-2 font-serif text-xl font-semibold text-[#FFF7EA]">
-                  {offer.title}
-                </h2>
-                {offer.description && (
-                  <p className="mt-1 line-clamp-2 text-sm text-white/80">
-                    {offer.description}
-                  </p>
-                )}
-              </div>
-            </Link>
+            </div>
           ) : (
             <div className="grid aspect-[4/5] w-full place-items-center rounded-3xl border border-dashed border-zinc-300 bg-white p-8 text-center">
               <div>
@@ -117,20 +98,6 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
                 </p>
               </div>
             </div>
-          )}
-
-          {offer?.image_url && (
-            <span
-              aria-hidden="true"
-              className="absolute -bottom-4 -left-4 hidden rounded-2xl border border-[#E7D5C1] bg-white px-4 py-3 shadow-lg sm:block"
-            >
-              <span className="block text-[11px] font-semibold uppercase tracking-wide text-[#B3703D]">
-                Today&apos;s pick
-              </span>
-              <span className="mt-0.5 block font-serif text-base font-semibold text-[#2A1710]">
-                Small-batch &amp; fresh
-              </span>
-            </span>
           )}
         </div>
       </div>
