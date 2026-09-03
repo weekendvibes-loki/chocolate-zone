@@ -1,10 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { OffersCarousel } from '@/components/storefront/offers-carousel';
 import type { Catalog } from '@/types/domain';
 
 export function HeroBanner({ catalog }: { catalog: Catalog }) {
-  const offer = catalog.offers.find((o) => o.image_url) ?? catalog.offers[0] ?? null;
-
   return (
     <section className="relative overflow-hidden bg-[#faf5ec]">
       <div
@@ -58,47 +56,7 @@ export function HeroBanner({ catalog }: { catalog: Catalog }) {
         </div>
 
         <div className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
-          {offer ? (
-            <div className="group relative block aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl ring-1 ring-zinc-900/10 transition-shadow hover:shadow-2xl lg:aspect-[5/6]">
-              {offer.image_url ? (
-                <Image
-                  src={offer.image_url}
-                  alt={offer.title}
-                  fill
-                  loading="eager"
-                  sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 45vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#B3703D] to-[#1E100B]">
-                  <span className="px-6 text-center font-serif text-xl font-semibold text-[#FFF7EA]">
-                    {offer.title}
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="grid aspect-[4/5] w-full place-items-center rounded-3xl border border-dashed border-zinc-300 bg-white p-8 text-center">
-              <div>
-                <span className="grid size-14 place-items-center rounded-full bg-amber-50">
-                  <svg
-                    className="size-7 text-amber-500"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 3v18M3 12h18" strokeLinecap="round" />
-                    <path d="m5 5 14 14M19 5 5 19" strokeLinecap="round" />
-                  </svg>
-                </span>
-                <p className="mt-4 text-sm text-zinc-500">
-                  Featured offers will appear here soon.
-                </p>
-              </div>
-            </div>
-          )}
+          <OffersCarousel offers={catalog.offers} />
         </div>
       </div>
     </section>

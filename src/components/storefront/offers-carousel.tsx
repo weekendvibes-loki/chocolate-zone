@@ -1,19 +1,18 @@
 "use client";
 
-import { discountLabel } from "@/components/storefront/offer-label";
-import { formatMoney, toMinor } from "@/lib/pricing/money";
-import type { CatalogProduct, Offer } from "@/types/domain";
 import Image from "next/image";
-import Link from "next/link";
+import type { Offer } from "@/types/domain";
 import {
   useCallback,
   useEffect,
   useRef,
   useState,
   useSyncExternalStore,
+  type ReactNode,
 } from "react";
 
 const AUTOPLAY_MS = 4500;
+const SWIPE_THRESHOLD = 40;
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 function subscribeToReducedMotion(callback: () => void) {
@@ -44,21 +43,27 @@ function useReducedMotion() {
   );
 }
 
-export function OffersCarousel({
-  offers,
-  currency,
-  products = [],
-}: {
-  offers: Offer[];
-  currency: string;
-  products?: CatalogProduct[];
-}) {
-  const count = offers.length;
+/**
+ * Image-only carousel that fills the hero's right-hand image area. Only offers
+ * that actually carry an image are usable as slides; when none do, the hero's
+ * original no-image fallback is shown instead. Every control overlays the
+ * image, so the carousel never adds height to the hero.
+ */
+export function OffersCarousel({ offers }: { offers: Offer[] }) {
+  const slides = offers.filter(
+    (offer): offer is Offer & { image_url: string } => Boolean(offer.image_url),
+  );
+  const count = slides.length;
+
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [documentHidden, setDocumentHidden] = useState(false);
   const [autoplayKey, setAutoplayKey] = useState(0);
   const reduceMotion = useReducedMotion();
   const regionRef = useRef<HTMLDivElement>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const go = useCallback(
     (index: number) => {
@@ -70,8 +75,20 @@ export function OffersCarousel({
     [count],
   );
 
+  // Autoplay runs only when the user is playing and no transient signal
+  // (hover, focus, or a hidden tab) is asking us to hold. Keeping these as
+  // independent signals means a manual pause is never clobbered by, say, the
+  // tab becoming visible again while the pointer is still hovering.
+  const autoplayActive =
+    isPlaying &&
+    !hovered &&
+    !focused &&
+    !documentHidden &&
+    !reduceMotion &&
+    count > 1;
+
   useEffect(() => {
-    if (paused || reduceMotion || count <= 1) return;
+    if (!autoplayActive) return;
 
     const intervalId = setInterval(
       () => setActive((current) => (current + 1) % count),
@@ -79,10 +96,10 @@ export function OffersCarousel({
     );
 
     return () => clearInterval(intervalId);
-  }, [paused, reduceMotion, count, autoplayKey]);
+  }, [autoplayActive, count, autoplayKey]);
 
   useEffect(() => {
-    const handleVisibilityChange = () => setPaused(document.hidden);
+    const handleVisibilityChange = () => setDocumentHidden(document.hidden);
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
@@ -109,316 +126,216 @@ export function OffersCarousel({
     return () => region.removeEventListener("keydown", handleKeyDown);
   }, [go, active]);
 
-  if (count === 0) return null;
+  // No usable offer image → preserve the hero's original no-image fallback.
+  if (count === 0) {
+    return (
+      <div className="grid aspect-[4/5] w-full place-items-center rounded-3xl border border-dashed border-zinc-300 bg-white p-8 text-center">
+        <div>
+          <span className="grid size-14 place-items-center rounded-full bg-amber-50">
+            <svg
+              className="size-7 text-amber-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
+            >
+              <path d="M12 3v18M3 12h18" strokeLinecap="round" />
+              <path d="m5 5 14 14M19 5 5 19" strokeLinecap="round" />
+            </svg>
+          </span>
+          <p className="mt-4 text-sm text-zinc-500">
+            Featured offers will appear here soon.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const showControls = count > 1;
 
   const pauseHandlers = {
-    onMouseEnter: () => setPaused(true),
-    onMouseLeave: () => setPaused(false),
-    onFocus: () => setPaused(true),
-    onBlur: () => setPaused(false),
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+    onFocus: () => setFocused(true),
+    onBlur: () => setFocused(false),
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#1E100B]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(179,112,61,0.16),transparent_70%)]"
-      />
+    <div
+      ref={regionRef}
+      className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-xl ring-1 ring-zinc-900/10 transition-shadow hover:shadow-2xl lg:aspect-[5/6]"
+      aria-roledescription="carousel"
+      aria-label="Featured offers"
+      onTouchStart={(event) => {
+        const touch = event.touches[0];
+        touchStart.current = { x: touch.clientX, y: touch.clientY };
+      }}
+      onTouchEnd={(event) => {
+        const start = touchStart.current;
+        touchStart.current = null;
+        if (!start) return;
 
-      <div
-        ref={regionRef}
-        className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6"
-        aria-roledescription="carousel"
-        aria-label="Featured offers"
-        {...pauseHandlers}
-      >
-        {count > 1 && (
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <span className="inline-flex items-center rounded-full border border-[#B3703D]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">
-                Limited offers
-              </span>
-            </div>
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - start.x;
+        const deltaY = touch.clientY - start.y;
 
-            <div className="flex items-center gap-2">
-              <CarouselButton
-                label="Previous offer"
-                direction="prev"
-                onClick={() => go(active - 1)}
-              />
+        // Only treat clearly horizontal drags as swipes so vertical
+        // scrolling is never hijacked.
+        if (
+          Math.abs(deltaX) < SWIPE_THRESHOLD ||
+          Math.abs(deltaX) <= Math.abs(deltaY)
+        )
+          return;
 
-              <CarouselButton
-                label="Next offer"
-                direction="next"
-                onClick={() => go(active + 1)}
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="relative w-full overflow-hidden" aria-live="polite">
-          <div className="grid w-full grid-cols-1">
-            {offers.map((offer, index) => (
-              <div
-                key={offer.id}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`Offer ${index + 1} of ${count}`}
-                aria-hidden={index !== active}
-                className="col-start-1 row-start-1 transition-transform duration-700 ease-out"
-                style={{
-                  transform: `translateX(${(index - active) * 100}%)`,
-                  transitionDuration: reduceMotion ? "0ms" : undefined,
-                }}
-              >
-                <CarouselSlide
-                  offer={offer}
-                  currency={currency}
-                  products={products}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {count > 1 && (
-          <div className="mt-8 flex justify-center gap-2.5">
-            {offers.map((offer, index) => (
-              <button
-                key={offer.id}
-                type="button"
-                onClick={() => go(index)}
-                aria-label={`Go to offer ${index + 1}: ${offer.title}`}
-                aria-current={index === active}
-                className={`h-2.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
-                  index === active
-                    ? "w-8 bg-[#F2B84B]"
-                    : "w-2.5 bg-[#E7D5C1]/25 hover:bg-[#E7D5C1]/50"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function CarouselSlide({
-  offer,
-  currency,
-  products,
-}: {
-  offer: Offer;
-  currency: string;
-  products: CatalogProduct[];
-}) {
-  return (
-    <div className="grid w-full min-w-0 gap-8 lg:grid-cols-2 lg:gap-16">
-      <div className="order-2 min-h-[340px] min-w-0 lg:order-1 lg:flex lg:h-[500px] lg:min-h-0 lg:flex-col lg:justify-center">
-        <span className="inline-flex items-center rounded-full border border-[#B3703D]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#F2B84B]">
-          Limited offer
-        </span>
-
-        <h2 className="mt-4 max-w-full break-words font-serif text-3xl font-semibold leading-tight tracking-tight text-[#FFF7EA] sm:text-4xl">
-          {offer.title}
-        </h2>
-
-        <div className="mt-4 inline-flex max-w-full rounded-xl bg-[#F2B84B] px-3.5 py-1.5 text-sm font-bold text-[#1E100B]">
-          {discountLabel(offer, currency)}
-        </div>
-
-        {offer.description && (
-          <p className="mt-5 max-w-md text-sm leading-7 text-[#E7D5C1]">
-            {offer.description}
-          </p>
-        )}
-
-        <OfferBundle offer={offer} products={products} currency={currency} />
-
-        <Link
-          href={`/products?offer=${encodeURIComponent(offer.id)}`}
-          className="mt-8 inline-flex max-w-full items-center justify-center rounded-xl bg-[#B3703D] px-7 py-3 text-sm font-semibold text-[#FFF7EA] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#B3703D]/90 hover:shadow-[0_12px_28px_-10px_rgba(179,112,61,0.6)]"
+        if (deltaX < 0) go(active + 1);
+        else go(active - 1);
+      }}
+      {...pauseHandlers}
+    >
+      {slides.map((offer, index) => (
+        <div
+          key={offer.id}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`Offer ${index + 1} of ${count}`}
+          aria-hidden={index !== active}
+          inert={index !== active}
+          className="absolute inset-0 transition-transform duration-[var(--dur-slow)] ease-out-soft"
+          style={{
+            transform: `translateX(${(index - active) * 100}%)`,
+            transitionDuration: reduceMotion ? "0ms" : undefined,
+          }}
         >
-          View offer
-        </Link>
-      </div>
-
-      <div className="order-1 min-w-0 lg:order-2">
-        <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden rounded-3xl shadow-2xl ring-1 ring-[#F2B84B]/15 lg:aspect-auto lg:h-[500px]">
-          {offer.image_url ? (
-            <>
-              <Image
-                src={offer.image_url}
-                alt={offer.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1E100B]/35 via-transparent to-transparent"
-              />
-            </>
-          ) : (
-            <div className="relative flex h-full w-full flex-col items-center justify-center gap-5 bg-gradient-to-br from-[#311A10] via-[#2A1710] to-[#1E100B] px-8 text-center">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_80%_at_50%_0%,rgba(179,112,61,0.28),transparent_70%)]"
-              />
-
-              <svg
-                aria-hidden="true"
-                className="relative size-14 text-[#F2B84B]"
-                viewBox="0 0 800 600"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <ellipse cx={400} cy={275} rx={225} ry={210} />
-
-                <ellipse
-                  cx={400}
-                  cy={275}
-                  rx={225}
-                  ry={210}
-                  transform="rotate(60 400 275)"
-                  opacity={0.6}
-                />
-
-                <ellipse
-                  cx={400}
-                  cy={275}
-                  rx={225}
-                  ry={210}
-                  transform="rotate(120 400 275)"
-                  opacity={0.35}
-                />
-              </svg>
-
-              <span className="relative max-w-full break-words font-serif text-2xl font-semibold leading-snug text-[#FFF7EA] sm:text-3xl">
-                {offer.title}
-              </span>
-
-              <span
-                aria-hidden="true"
-                className="relative h-px w-12 bg-gradient-to-r from-transparent via-[#F2B84B]/70 to-transparent"
-              />
-            </div>
-          )}
+          <Image
+            src={offer.image_url}
+            alt={offer.title}
+            fill
+            loading={index === 0 ? "eager" : undefined}
+            sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 45vw"
+            className="object-cover"
+          />
         </div>
-      </div>
+      ))}
+
+      {showControls && (
+        <>
+          <OverlayButton
+            label={isPlaying ? "Pause offer rotation" : "Play offer rotation"}
+            onClick={() => setIsPlaying((playing) => !playing)}
+            className="left-2 top-2"
+          >
+            {isPlaying ? (
+              <svg
+                className="size-4"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <rect x="6.5" y="5" width="3.5" height="14" rx="1" />
+                <rect x="14" y="5" width="3.5" height="14" rx="1" />
+              </svg>
+            ) : (
+              <svg
+                className="size-4"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5Z" />
+              </svg>
+            )}
+          </OverlayButton>
+
+          <OverlayButton
+            label="Previous offer"
+            onClick={() => go(active - 1)}
+            className="left-2 top-1/2 -translate-y-1/2"
+          >
+            <svg
+              className="size-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path
+                d="m15 5-7 7 7 7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </OverlayButton>
+
+          <OverlayButton
+            label="Next offer"
+            onClick={() => go(active + 1)}
+            className="right-2 top-1/2 -translate-y-1/2"
+          >
+            <svg
+              className="size-4 rotate-180"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path
+                d="m15 5-7 7 7 7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </OverlayButton>
+
+          <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center">
+            <div className="flex items-center gap-1.5 rounded-full bg-cocoa-950/40 px-2 py-1">
+              {slides.map((offer, index) => (
+                <button
+                  key={offer.id}
+                  type="button"
+                  onClick={() => go(index)}
+                  aria-label={`Go to offer ${index + 1}`}
+                  aria-current={index === active}
+                  className="grid size-11 -my-3 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-400"
+                >
+                  <span
+                    className={`rounded-full transition-all duration-[var(--dur-base)] ease-out-soft ${
+                      index === active
+                        ? "h-1.5 w-4 bg-ivory"
+                        : "size-1.5 bg-ivory/60"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-/**
- * Bundle composition for multi-product fixed offers, shown on the promotional
- * slide. Everything is derived from existing offer and product data. The cart
- * engine remains the source of truth for applying the real discount.
- */
-function OfferBundle({
-  offer,
-  products,
-  currency,
-}: {
-  offer: Offer;
-  products: CatalogProduct[];
-  currency: string;
-}) {
-  if (offer.applies_to_all) return null;
-
-  const members = products.filter((product) =>
-    offer.offerProductIds.includes(product.id),
-  );
-
-  if (members.length <= 1) return null;
-
-  const normalMinor = members.reduce(
-    (total, product) => total + toMinor(product.base_price),
-    0,
-  );
-
-  const showDeal = offer.discount_type === "fixed";
-  const dealMinor = showDeal
-    ? normalMinor - toMinor(offer.discount_value)
-    : null;
-  const savingsMinor = showDeal ? toMinor(offer.discount_value) : null;
-
-  return (
-    <div className="mt-6 max-w-md rounded-2xl border border-[#B3703D]/40 bg-[#1E100B]/60 p-4">
-      <ul className="space-y-1.5">
-        {members.map((member) => (
-          <li
-            key={member.id}
-            className="flex items-baseline justify-between gap-3 text-sm"
-          >
-            <span className="text-[#FFF7EA]">{member.name}</span>
-
-            <span className="text-[#E7D5C1]/80">
-              {formatMoney(toMinor(member.base_price), currency)}
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      {dealMinor !== null && savingsMinor !== null && (
-        <p className="mt-3 border-t border-[#B3703D]/40 pt-3 text-sm font-semibold text-[#FFF7EA]">
-          Normal {formatMoney(normalMinor, currency)} · Deal{" "}
-          {formatMoney(dealMinor, currency)}
-        </p>
-      )}
-
-      {savingsMinor !== null && (
-        <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-[#F2B84B]">
-          <svg
-            className="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <path
-              d="M20 6 9 17l-5-5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          Save {formatMoney(savingsMinor, currency)}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function CarouselButton({
+function OverlayButton({
   label,
-  direction,
   onClick,
+  className,
+  children,
 }: {
   label: string;
-  direction: "prev" | "next";
   onClick: () => void;
+  className?: string;
+  children: ReactNode;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="grid size-11 place-items-center rounded-full border border-[#B3703D]/40 bg-white/[0.04] text-[#E7D5C1] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/60 hover:bg-[#B3703D] hover:text-[#FFF7EA] hover:shadow-[0_0_16px_rgba(242,184,75,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60"
+      className={`absolute z-10 grid size-11 place-items-center rounded-full bg-cocoa-950/50 text-ivory transition-colors duration-[var(--dur-base)] ease-out-soft hover:bg-cocoa-950/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-400 motion-reduce:transition-none ${className ?? ""}`}
     >
-      <svg
-        className={`size-5 ${direction === "prev" ? "" : "rotate-180"}`}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        aria-hidden="true"
-      >
-        <path d="m15 5-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      {children}
     </button>
   );
 }
