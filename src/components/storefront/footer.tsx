@@ -2,12 +2,6 @@ import Link from 'next/link';
 import { getCatalog } from '@/lib/services/catalog';
 import type { TimingRule } from '@/types/domain';
 
-const socialLinks = [
-  { label: 'Instagram', href: '#' },
-  { label: 'Facebook', href: '#' },
-  { label: 'WhatsApp', href: '#' },
-];
-
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function formatTime(time: string | null | undefined): string | null {
@@ -81,137 +75,110 @@ export async function StorefrontFooter() {
 
   const brand = shop?.brand ?? 'Chocolate Zone';
   const phone = shop?.contact_phone?.trim() || (shop?.whatsapp_number ? formatPhone(shop.whatsapp_number) : '');
+  const phoneHref = phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : null;
   const email = shop?.contact_email?.trim() ?? '';
   const address = shop?.address?.trim() ?? '';
   const timings = timingSummary(shop?.timings ?? null);
 
+  const exploreLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/#menu', label: 'Menu' },
+    { href: '/products', label: 'Shop' },
+    { href: '/offers', label: 'Offers' },
+  ];
+
   return (
-    <footer
-      id="contact"
-      className="relative overflow-hidden border-t border-[#B3703D]/50 bg-gradient-to-b from-[#4E2F1D] via-[#3A2417] to-[#2A1710]"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(65%_100%_at_50%_0%,rgba(179,112,61,0.26),transparent_72%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(180deg,rgba(255,255,255,0.014)_0,rgba(255,255,255,0.014)_1px,transparent_1px,transparent_15px)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/50 to-transparent"
-      />
-      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t border-cream-300/15 bg-cocoa-900">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl border border-[#F2B84B]/40 bg-[#F2B84B]/10 text-[#F2B84B] shadow-[0_0_18px_rgba(242,184,75,0.15),inset_0_1px_0_rgba(255,255,255,0.08)]">
-              <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <span
+              aria-hidden="true"
+              className="grid size-10 place-items-center rounded-xl border border-gold-400/30 bg-gold-400/10 text-gold-400"
+            >
+              <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="M3 10h18M3 14h18M8 5v4M16 5v4" strokeLinecap="round" />
               </svg>
             </span>
-            <span className="font-serif text-xl font-semibold tracking-wide text-[#FFF7EA]">{brand}</span>
+            <span className="font-display text-xl font-semibold tracking-wide text-ivory">{brand}</span>
           </div>
-          <p className="mt-5 max-w-xs text-sm leading-6 text-[#E7D5C1]/75">
+          <p className="mt-5 max-w-xs text-sm leading-6 text-cream-200/75">
             Handcrafted chocolates made fresh every day with premium cocoa and real ingredients.
           </p>
-          <div aria-hidden="true" className="mt-6 h-px w-16 bg-gradient-to-r from-[#B3703D] to-[#F2B84B]/60" />
+          <div aria-hidden="true" className="mt-6 h-px w-16 bg-cream-300/20" />
         </div>
 
-        <div>
-          <h3 className="text-[0.8rem] font-semibold uppercase tracking-[0.16em] text-[#F2B84B]">Explore</h3>
-          <div aria-hidden="true" className="mt-3 h-px w-8 bg-gradient-to-r from-[#B3703D] to-[#F2B84B]/50" />
-          <ul className="mt-5 space-y-3 text-sm text-[#E7D5C1]">
-            {[
-              { href: '/', label: 'Home' },
-              { href: '#menu', label: 'Menu' },
-              { href: '/products', label: 'Shop' },
-              { href: '/offers', label: 'Offers' },
-            ].map((link) => (
+        <nav aria-label="Footer">
+          <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.16em] text-gold-400">Explore</h2>
+          <div aria-hidden="true" className="mt-3 h-px w-8 bg-cream-300/20" />
+          <ul className="mt-4 text-sm text-cream-200">
+            {exploreLinks.map((link) => (
               <li key={link.label}>
                 <Link
                   href={link.href}
-                  className="group inline-flex items-center gap-2.5 transition-colors duration-300 hover:text-[#F2B84B]"
+                  className="group inline-flex min-h-11 items-center gap-2.5 transition-colors duration-[var(--dur-base)] ease-out-soft hover:text-gold-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cocoa-900 motion-reduce:transition-none"
                 >
                   <span
                     aria-hidden="true"
-                    className="size-1.5 shrink-0 rounded-full bg-[#B3703D] transition-transform duration-300 group-hover:translate-x-1"
+                    className="size-1.5 shrink-0 rounded-full bg-gold-400 transition-transform duration-[var(--dur-base)] group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                   />
                   {link.label}
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
-        <div>
-          <h3 className="text-[0.8rem] font-semibold uppercase tracking-[0.16em] text-[#F2B84B]">Contact</h3>
-          <div aria-hidden="true" className="mt-3 h-px w-8 bg-gradient-to-r from-[#B3703D] to-[#F2B84B]/50" />
-          <ul className="mt-5 space-y-3 text-sm text-[#E7D5C1]">
-            {phone ? <li>Phone / WhatsApp: {phone}</li> : null}
-            {email ? <li>Email: {email}</li> : null}
-            {address ? <li>Address: {address}</li> : null}
+        <section id="contact" aria-label="Contact" className="scroll-mt-16 lg:scroll-mt-20 lg:border-l lg:border-cream-300/15 lg:pl-8">
+          <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.16em] text-gold-400">Contact</h2>
+          <div aria-hidden="true" className="mt-3 h-px w-8 bg-cream-300/20" />
+          <ul className="mt-4 text-sm text-cream-200/80">
+            {phone ? (
+              <li>
+                <span className="block pt-2.5">Phone / WhatsApp:</span>
+                <a
+                  href={phoneHref ?? undefined}
+                  className="inline-flex min-h-11 items-center font-medium text-ivory transition-colors duration-[var(--dur-base)] hover:text-gold-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cocoa-900 motion-reduce:transition-none"
+                >
+                  {phone}
+                </a>
+              </li>
+            ) : null}
+            {email ? (
+              <li>
+                <span className="block pt-2.5">Email:</span>
+                <a
+                  href={`mailto:${email}`}
+                  className="inline-flex min-h-11 items-center font-medium text-ivory transition-colors duration-[var(--dur-base)] hover:text-gold-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cocoa-900 motion-reduce:transition-none"
+                >
+                  {email}
+                </a>
+              </li>
+            ) : null}
+            {address ? <li className="pt-2.5">Address: {address}</li> : null}
             {!phone && !email && !address && (
-              <li>Reach out through the shop for orders and enquiries.</li>
+              <li className="pt-2.5">Reach out through the shop for orders and enquiries.</li>
             )}
           </ul>
-        </div>
+        </section>
 
-        <div>
-          <h3 className="text-[0.8rem] font-semibold uppercase tracking-[0.16em] text-[#F2B84B]">Store timings</h3>
-          <div aria-hidden="true" className="mt-3 h-px w-8 bg-gradient-to-r from-[#B3703D] to-[#F2B84B]/50" />
-          <ul className="mt-5 space-y-3 text-sm text-[#E7D5C1]">
+        <section aria-label="Store timings">
+          <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.16em] text-gold-400">Store timings</h2>
+          <div aria-hidden="true" className="mt-3 h-px w-8 bg-cream-300/20" />
+          <ul className="mt-4 space-y-3 pt-2.5 text-sm text-cream-200/80">
             {timings.rows.map((row, i) => (
               <li key={i} className="flex justify-between gap-4">
                 <span>{row.label}</span>
-                <span className="text-[#FFF7EA]">{row.value}</span>
+                <span className="text-ivory">{row.value}</span>
               </li>
             ))}
           </ul>
-          <div className="mt-7 flex items-center gap-3">
-            {socialLinks.map((s) => (
-              <Link
-                key={s.label}
-                href={s.href}
-                aria-label={s.label}
-                className="grid size-10 place-items-center rounded-full border border-[#B3703D]/40 bg-white/[0.02] text-[#E7D5C1] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B] hover:bg-[#B3703D]/20 hover:text-[#F2B84B] hover:shadow-[0_0_14px_rgba(242,184,75,0.3)]"
-              >
-                {socialIcon(s.label)}
-              </Link>
-            ))}
-          </div>
-        </div>
+        </section>
       </div>
-      <div className="relative border-t border-white/[0.08] py-5 text-center text-xs text-[#E7D5C1]/60">
+      <div className="border-t border-cream-300/10 bg-cocoa-950 py-5 text-center text-xs text-cream-200/60">
         © {new Date().getFullYear()} {brand}. All rights reserved.
       </div>
     </footer>
   );
-}
-
-function socialIcon(label: string) {
-  switch (label) {
-    case 'Instagram':
-      return (
-        <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="5" />
-          <circle cx="12" cy="12" r="4" />
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-        </svg>
-      );
-    case 'Facebook':
-      return (
-        <svg className="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M13.5 21v-7h2.5l.5-3h-3V9c0-.9.3-1.5 1.7-1.5H16V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.7 1.4-3.7 3.9V11H7.5v3h2.5v7h3.5Z" />
-        </svg>
-      );
-    default:
-      return (
-        <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <path d="M12 3a9 9 0 0 0-7.7 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3Z" strokeLinejoin="round" />
-          <path d="M8.5 9.5c0 3.5 2.5 6 6 6l1-1.5-2-1-.7.7a4.5 4.5 0 0 1-2.5-2.5l.7-.7-1-2Z" strokeLinejoin="round" />
-        </svg>
-      );
-  }
 }

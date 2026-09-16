@@ -8,14 +8,14 @@ import { ChocolateZoneLogo } from '@/components/storefront/chocolate-zone-logo';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '#menu', label: 'Menu' },
+  { href: '/#menu', label: 'Menu' },
   { href: '/products', label: 'Shop' },
   { href: '/offers', label: 'Offers' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/#contact', label: 'Contact' },
 ];
 
 const iconButton =
-  'group relative grid size-11 place-items-center rounded-full border border-[#B3703D]/40 bg-gradient-to-b from-white/[0.07] to-white/[0.02] text-[#E7D5C1] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F2B84B]/60 hover:bg-[#B3703D]/25 hover:text-[#F2B84B] hover:shadow-[0_0_22px_rgba(242,184,75,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 active:translate-y-0 active:scale-95 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:size-10';
+  'group relative grid size-11 place-items-center rounded-full border border-cream-300/25 text-cream-200 transition-colors duration-[var(--dur-base)] ease-out-soft hover:border-gold-400/60 hover:bg-gold-400/10 hover:text-gold-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 motion-reduce:transition-none';
 
 export function StorefrontHeader() {
   const { summary, openCart } = useCart();
@@ -96,73 +96,42 @@ export function StorefrontHeader() {
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
     if (href === '/products') return pathname === '/products' || pathname.startsWith('/products/');
-    if (href === '/offers') return pathname === '/offers';
+    if (href === '/offers') return pathname === '/offers' || pathname.startsWith('/offers/');
     return false;
   };
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="relative animate-[header-enter_0.6s_ease-out] border-b border-[#B3703D]/60 shadow-[0_16px_36px_-18px_rgba(0,0,0,0.65)]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#46291A] via-[#332015] to-[#201109]" />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(75%_170%_at_38%_0%,rgba(179,112,61,0.42),transparent_62%)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(42%_140%_at_88%_0%,rgba(242,184,75,0.14),transparent_65%)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.02)_32%,rgba(0,0,0,0.1)_76%,rgba(0,0,0,0.26)_100%)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(180deg,rgba(255,255,255,0.016)_0,rgba(255,255,255,0.016)_1px,transparent_1px,transparent_15px)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#B3703D]/90 to-transparent"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/30 to-transparent"
-        />
-
+      <div className="relative animate-[header-enter_0.6s_ease-out] border-b border-cream-300/15 bg-cocoa-900 motion-reduce:animate-none">
         <div className="relative mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:h-20 lg:grid lg:grid-cols-[1fr_auto_1fr]">
           <Link
             href="/"
             aria-label="Chocolate Zone — home"
-            className="group flex shrink-0 items-center justify-self-start rounded-xl transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/70"
+            className="group flex shrink-0 items-center justify-self-start rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
           >
-            <span className="relative block aspect-[4/3] w-14 transition-all duration-300 group-hover:scale-[1.04] group-hover:drop-shadow-[0_0_18px_rgba(242,184,75,0.4)] sm:w-20 lg:w-24">
-              <ChocolateZoneLogo className="absolute inset-0 h-full w-full" />
+            {/* Height-driven container: the logo keeps its intrinsic aspect
+                ratio, so the script wordmark is no longer clipped. */}
+            <span className="relative flex h-11 items-center transition-colors duration-[var(--dur-base)] group-hover:opacity-90 motion-reduce:transition-none sm:h-14 lg:h-16">
+              <ChocolateZoneLogo className="h-full w-auto" />
             </span>
           </Link>
 
-          <nav className="hidden items-center justify-center gap-2 lg:flex" aria-label="Main navigation">
+          <nav className="hidden items-center justify-center gap-1 lg:flex" aria-label="Main navigation">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               return (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`group relative flex items-center rounded-full px-4 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
-                    active ? 'text-[#F2B84B]' : 'text-[#E7D5C1] hover:text-[#FFF7EA]'
-                  }`}
+                  aria-current={active ? 'page' : undefined}
+                  className="group relative inline-flex min-h-11 items-center rounded-lg px-4 text-[0.8rem] font-semibold uppercase tracking-[0.14em] transition-colors duration-[var(--dur-base)] ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 motion-reduce:transition-none"
                 >
+                  <span className={active ? 'text-gold-400' : 'text-cream-200 group-hover:text-ivory'}>
+                    {link.label}
+                  </span>
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-0 rounded-full transition-all duration-300 ${
-                      active
-                        ? 'bg-[#B3703D]/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-[#B3703D]/40'
-                        : 'bg-transparent group-hover:bg-[#B3703D]/10'
-                    }`}
-                  />
-                  <span className="relative">{link.label}</span>
-                  <span
-                    aria-hidden="true"
-                    className={`absolute inset-x-3 -bottom-[2px] h-[2.5px] origin-left rounded-full bg-gradient-to-r from-[#B3703D] to-[#F2B84B] shadow-[0_0_10px_rgba(242,184,75,0.65)] transition-transform duration-300 ease-out ${
+                    className={`absolute inset-x-4 bottom-2 h-0.5 origin-left rounded-full bg-gold-400 transition-transform duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none ${
                       active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                     }`}
                   />
@@ -183,10 +152,10 @@ export function StorefrontHeader() {
               >
                 <span className="relative block size-5" aria-hidden="true">
                   <svg
-                    className={`absolute inset-0 size-5 transition-all duration-300 ease-out motion-reduce:transition-none ${
+                    className={`absolute inset-0 size-5 transition-all duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none ${
                       searchOpen
                         ? 'scale-50 -rotate-90 opacity-0'
-                        : 'scale-100 rotate-0 opacity-100 group-hover:scale-[1.08] group-hover:-rotate-6'
+                        : 'scale-100 rotate-0 opacity-100'
                     }`}
                     viewBox="0 0 24 24"
                     fill="none"
@@ -197,7 +166,7 @@ export function StorefrontHeader() {
                     <path d="m21 21-4.35-4.35" strokeLinecap="round" />
                   </svg>
                   <svg
-                    className={`absolute inset-0 size-5 transition-all duration-300 ease-out motion-reduce:transition-none ${
+                    className={`absolute inset-0 size-5 transition-all duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none ${
                       searchOpen
                         ? 'scale-100 rotate-0 opacity-100'
                         : 'scale-50 rotate-90 opacity-0'
@@ -213,14 +182,10 @@ export function StorefrontHeader() {
               </button>
 
               {searchOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] overflow-hidden rounded-2xl border border-white/10 bg-[#1E100B]/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] backdrop-blur-xl motion-reduce:animate-none">
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F2B84B]/50 to-transparent"
-                  />
+                <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] animate-[header-slide-down_0.15s_ease-out] rounded-xl border border-cream-300/15 bg-cocoa-950 p-2 shadow-2xl motion-reduce:animate-none">
                   <form onSubmit={applySearch} className="relative">
                     <svg
-                      className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#E7D5C1]/50"
+                      className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-cream-200/50"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -237,7 +202,7 @@ export function StorefrontHeader() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Search products…"
-                      className="w-full rounded-xl border border-white/10 bg-[#1E100B] py-2.5 pl-9 pr-9 text-sm text-[#FFF7EA] placeholder:text-[#E7D5C1]/45 focus:border-[#F2B84B]/70 focus:outline-none focus:ring-2 focus:ring-[#F2B84B]/30"
+                      className="w-full rounded-lg border border-cream-300/20 bg-cocoa-900 py-2.5 pl-9 pr-11 text-sm text-ivory placeholder:text-cream-200/45 focus:border-gold-400/60 focus:outline-none focus:ring-2 focus:ring-gold-400/30"
                     />
                     {searchTerm && (
                       <button
@@ -247,7 +212,7 @@ export function StorefrontHeader() {
                           searchInputRef.current?.focus();
                         }}
                         aria-label="Clear search"
-                        className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-[#E7D5C1]/60 transition-colors hover:bg-[#3b2a1d] hover:text-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60"
+                        className="absolute right-1 top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full text-cream-200/60 transition-colors hover:bg-cream-300/10 hover:text-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
                       >
                         <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                           <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -266,7 +231,7 @@ export function StorefrontHeader() {
               className={iconButton}
             >
               <svg
-                className="size-5 transition-transform duration-300 ease-out motion-reduce:transition-none group-hover:scale-[1.08]"
+                className="size-5"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -279,7 +244,7 @@ export function StorefrontHeader() {
               {summary.itemCount > 0 && (
                 <span
                   key={summary.itemCount}
-                  className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[badge-pop_0.4s_ease-out] place-items-center rounded-full bg-[#F2B84B] px-1 text-[0.65rem] font-bold text-[#1E100B] shadow-[0_0_10px_rgba(242,184,75,0.5)] ring-2 ring-[#1E100B] motion-reduce:animate-none"
+                  className="absolute -right-1 -top-1 grid size-5 min-w-5 animate-[badge-pop_0.4s_ease-out] place-items-center rounded-full bg-gold-400 px-1 text-[0.65rem] font-bold text-cocoa-950 ring-2 ring-cocoa-900 motion-reduce:animate-none"
                 >
                   {summary.itemCount > 99 ? '99+' : summary.itemCount}
                 </span>
@@ -296,17 +261,17 @@ export function StorefrontHeader() {
             >
               <span className="relative block h-3.5 w-5" aria-hidden="true">
                 <span
-                  className={`absolute left-0 top-0 h-[2px] w-full rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                  className={`absolute left-0 top-0 h-[2px] w-full rounded-full bg-current transition-transform duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none ${
                     menuOpen ? 'translate-y-[6px] rotate-45' : ''
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-1.5 h-[2px] w-full rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                  className={`absolute left-0 top-1.5 h-[2px] w-full rounded-full bg-current transition-all duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none ${
                     menuOpen ? 'scale-x-0 opacity-0' : ''
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-3 h-[2px] w-full rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+                  className={`absolute left-0 top-3 h-[2px] w-full rounded-full bg-current transition-transform duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none ${
                     menuOpen ? '-translate-y-[6px] -rotate-45' : ''
                   }`}
                 />
@@ -322,7 +287,7 @@ export function StorefrontHeader() {
             type="button"
             aria-label="Close menu"
             onClick={closeMenu}
-            className={`fixed inset-x-0 bottom-0 top-16 z-40 w-full cursor-default bg-[#120b08]/50 backdrop-blur-sm ${
+            className={`fixed inset-x-0 bottom-0 top-16 z-40 w-full cursor-default bg-cocoa-950/60 ${
               closing
                 ? 'animate-[header-fade-out_0.2s_ease-in_forwards]'
                 : 'animate-[header-fade-in_0.2s_ease-out]'
@@ -331,42 +296,35 @@ export function StorefrontHeader() {
           <nav
             id="mobile-menu"
             aria-label="Mobile navigation"
-            className={`absolute inset-x-0 top-16 z-50 border-t border-white/10 bg-gradient-to-b from-[#2A1710] to-[#1E100B]/95 px-4 pb-5 pt-2 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.8)] backdrop-blur-xl ${
+            className={`absolute inset-x-0 top-16 z-50 border-t border-cream-300/10 bg-cocoa-900 px-4 pb-5 pt-2 shadow-2xl ${
               closing
                 ? 'animate-[menu-exit_0.2s_ease-in_forwards]'
                 : 'animate-[header-slide-down_0.25s_ease-out]'
             }`}
           >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_100%_at_50%_0%,rgba(179,112,61,0.22),transparent_70%)]"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent"
-            />
-            <ul className="divide-y divide-white/[0.06]">
+            <ul className="divide-y divide-cream-300/10">
               {navLinks.map((link, i) => {
                 const active = isActive(link.href);
                 return (
                   <li
                     key={link.label}
-                    className="animate-[menu-item-rise_0.3s_ease-out_both]"
+                    className="animate-[menu-item-rise_0.3s_ease-out_both] motion-reduce:animate-none"
                     style={{ animationDelay: `${i * 45}ms` }}
                   >
                     <Link
                       href={link.href}
                       onClick={closeMenu}
-                      className={`flex min-h-12 items-center gap-3 rounded-xl px-3.5 text-[0.85rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2B84B]/60 ${
+                      aria-current={active ? 'page' : undefined}
+                      className={`flex min-h-12 items-center gap-3 rounded-lg px-3.5 text-[0.85rem] font-semibold uppercase tracking-[0.14em] transition-colors duration-[var(--dur-base)] ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 motion-reduce:transition-none ${
                         active
-                          ? 'bg-[#B3703D]/20 text-[#F2B84B] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-[#B3703D]/40'
-                          : 'text-[#E7D5C1] hover:bg-white/[0.03] hover:text-white'
+                          ? 'bg-gold-400/10 text-gold-400'
+                          : 'text-cream-200 hover:bg-cream-300/10 hover:text-ivory'
                       }`}
                     >
                       {active && (
                         <span
                           aria-hidden="true"
-                          className="size-1.5 shrink-0 rounded-full bg-[#F2B84B] shadow-[0_0_8px_rgba(242,184,75,0.6)]"
+                          className="size-1.5 shrink-0 rounded-full bg-gold-400"
                         />
                       )}
                       {link.label}

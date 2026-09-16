@@ -14,9 +14,9 @@ export default async function OrderSuccessPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <div className="rounded-2xl border border-[#E7D5C1] bg-[#FFF7EA] px-6 py-12 text-center sm:px-12 sm:py-14">
+      <div className="rounded-2xl border border-cream-300 bg-ivory px-6 py-12 text-center sm:px-12 sm:py-14">
         <span
-          className="mx-auto grid size-14 place-items-center rounded-full bg-[#F2B84B]/25 text-[#B3703D] animate-[success-pop_0.45s_ease-out] motion-reduce:animate-none"
+          className="mx-auto grid size-14 place-items-center rounded-full bg-gold-400/25 text-terracotta-700 animate-[success-pop_0.45s_ease-out] motion-reduce:animate-none"
           aria-hidden="true"
         >
           <svg className="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -24,17 +24,17 @@ export default async function OrderSuccessPage() {
           </svg>
         </span>
 
-        <h1 className="mt-6 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
-          Your order has been sent
+        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-cocoa-900 sm:text-4xl">
+          Your order is ready in WhatsApp
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[#6B4A33] sm:text-base">
-          Your order details have been sent through WhatsApp.
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-cocoa-500 sm:text-base">
+          Review your order in WhatsApp and send the message to confirm it with the store.
         </p>
 
-        <div className="mx-auto mt-8 max-w-md rounded-xl border border-[#E7D5C1] bg-white p-5 text-left">
+        <div className="mx-auto mt-8 max-w-md rounded-xl border border-cream-300 bg-cream-100 p-5 text-left">
           <div className="flex items-start gap-3">
             <span
-              className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-full bg-[#25D366]/15 text-[#1E100B]"
+              className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-full bg-whatsapp/15 text-cocoa-950"
               aria-hidden="true"
             >
               <svg className="size-5" viewBox="0 0 24 24" fill="currentColor">
@@ -42,8 +42,8 @@ export default async function OrderSuccessPage() {
               </svg>
             </span>
             <div>
-              <p className="text-sm font-semibold text-[#2A1710]">Your order is ready in WhatsApp</p>
-              <p className="mt-1 text-sm leading-relaxed text-[#7A4E2D]">
+              <p className="text-sm font-semibold text-cocoa-900">Your order is ready in WhatsApp</p>
+              <p className="mt-1 text-sm leading-relaxed text-cocoa-400">
                 Please review the order there and continue the conversation with {brand}.
               </p>
             </div>
@@ -53,7 +53,7 @@ export default async function OrderSuccessPage() {
               href={`https://wa.me/${whatsappNumber}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex min-h-11 items-center rounded-lg text-sm font-semibold text-[#B3703D] transition-colors hover:text-[#2A1710] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              className="mt-4 inline-flex min-h-11 items-center rounded-lg text-sm font-semibold text-terracotta-700 transition-colors hover:text-cocoa-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900"
             >
               WhatsApp didn&apos;t open? Open it again
             </a>
@@ -63,13 +63,13 @@ export default async function OrderSuccessPage() {
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/products"
-            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#2A1710] px-6 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 sm:w-auto"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-cocoa-900 px-6 text-sm font-semibold text-ivory transition-colors hover:bg-cocoa-950 active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 sm:w-auto"
           >
             Continue Shopping
           </Link>
           <Link
             href="/offers"
-            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-[#B3703D]/40 bg-white px-6 text-sm font-semibold text-[#B3703D] transition-colors hover:border-[#B3703D] hover:bg-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 sm:w-auto"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-terracotta-700/40 bg-cream-100 px-6 text-sm font-semibold text-terracotta-700 transition-colors hover:border-terracotta-700 hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 sm:w-auto"
           >
             Explore Offers
           </Link>

@@ -1,9 +1,8 @@
 import { getCatalog } from '@/lib/services/catalog';
-import { EmptyState } from '@/components/admin/empty-state';
+import { StorefrontErrorState } from '@/components/storefront/error-state';
 import { HeroBanner } from '@/components/storefront/hero-banner';
 import { CategorySection } from '@/components/storefront/category-section';
 import { FeaturedProducts } from '@/components/storefront/featured-products';
-import { BrandSection, FeaturedOfferSection, FinalCta } from '@/components/storefront/home-sections';
 import { OrdersClosedBanner } from '@/components/storefront/orders-closed-banner';
 import type { Catalog } from '@/types/domain';
 
@@ -18,7 +17,7 @@ export default async function HomePage() {
   if (!catalog) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <EmptyState
+        <StorefrontErrorState
           title="We couldn't load the menu"
           description="Something went wrong while fetching the catalog. Please try again in a moment."
         />
@@ -32,9 +31,6 @@ export default async function HomePage() {
       <HeroBanner catalog={catalog} />
       <CategorySection categories={catalog.categories} />
       <FeaturedProducts catalog={catalog} />
-      <FeaturedOfferSection catalog={catalog} />
-      <BrandSection catalog={catalog} />
-      <FinalCta />
     </div>
   );
 }
