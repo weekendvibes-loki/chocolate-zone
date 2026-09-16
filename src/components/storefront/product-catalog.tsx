@@ -1,13 +1,23 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { ProductCard } from '@/components/storefront/product-card';
+import { Badge } from '@/components/storefront/ui/badge';
+import { Button } from '@/components/storefront/ui/button';
+import { EmptyState } from '@/components/storefront/ui/empty-state';
 import { BackButton } from '@/components/storefront/back-button';
 import { discountLabel } from '@/components/storefront/offer-label';
 import { toMinor } from '@/lib/pricing/money';
 import type { Catalog, Offer } from '@/types/domain';
 
 type SortKey = 'default' | 'name' | 'price-asc' | 'price-desc';
+
+const SORT_OPTIONS: ReadonlyArray<{ value: SortKey; label: string }> = [
+  { value: 'default', label: 'Recommended' },
+  { value: 'name', label: 'Name (A – Z)' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+];
 
 export function ProductCatalog({
   catalog,
@@ -69,49 +79,50 @@ export function ProductCatalog({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 pb-12 pt-6 sm:px-6 sm:py-14">
       <BackButton />
-      <div className="mb-10 max-w-2xl">
-        <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">The collection</span>
-        <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
+      <div className="catalog-enter catalog-enter-heading mb-8 max-w-2xl sm:mb-10">
+        <span className="text-xs font-semibold uppercase tracking-[0.16em] text-terracotta-700">The collection</span>
+        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-cocoa-900 sm:text-4xl">
           Chocolate &amp; treats
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-[#6B4A33] sm:text-base">
+        <p className="mt-3 max-w-xl text-sm leading-6 text-cocoa-500 sm:text-base sm:leading-7">
           Small-batch chocolates, indulgent bites and handcrafted treats — made with care and ready to enjoy.
         </p>
       </div>
 
-      {activeOffer && (
-        <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-[#2A1710] bg-[#2A1710] px-5 py-4 sm:flex-row sm:items-center">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex shrink-0 items-center rounded-full bg-[#F2B84B] px-3 py-1 text-xs font-bold text-[#1E100B]">
-              {discountLabel(activeOffer, currency)}
-            </span>
-            <div>
-              <h2 className="font-serif text-lg font-semibold text-[#FFF7EA]">{activeOffer.title}</h2>
-              <p className="text-sm text-[#E7D5C1]">
-                Showing treats included in this offer
-                {activeOffer.applies_to_all ? ' — the discount applies to the whole collection.' : '.'}
-              </p>
+      <div className="catalog-enter catalog-enter-filters relative z-10 overflow-visible">
+        {activeOffer && (
+          <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl bg-cocoa-900 p-4 sm:flex-row sm:items-center sm:p-5">
+            <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row">
+              <Badge variant="offer" className="shrink-0">
+                {discountLabel(activeOffer, currency)}
+              </Badge>
+              <div>
+                <h2 className="font-display text-lg font-semibold text-ivory">{activeOffer.title}</h2>
+                <p className="text-sm text-cream-300">
+                  Showing treats included in this offer
+                  {activeOffer.applies_to_all ? ' — the discount applies to the whole collection.' : '.'}
+                </p>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="inline-flex shrink-0 items-center gap-1.5 min-h-11 rounded-lg px-3 py-2 text-sm font-medium text-gold-400 transition-colors hover:bg-ivory/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400"
+            >
+              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
+              </svg>
+              Browse all products
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#F2B84B] transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-          >
-            <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
-            </svg>
-            Browse all offers
-          </button>
-        </div>
-      )}
+        )}
 
-      <div className="mb-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#7A4E2D]">Browse by category</p>
-        <div className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <CategoryChip label="All" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
+      <div className="mb-5">
+        <p id="catalog-categories-label" className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-500">Browse by category</p>
+        <div role="group" aria-labelledby="catalog-categories-label" className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-1 [&::-webkit-scrollbar]:hidden">
+          <CategoryChip label="All treats" active={categoryId === 'all'} onClick={() => setCategoryId('all')} />
           {catalog.categories.map((c) => (
             <CategoryChip
               key={c.id}
@@ -124,41 +135,22 @@ export function ProductCatalog({
         </div>
       </div>
 
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-medium text-[#6B4A33]">
+      <div className="relative z-10 mb-6 flex flex-col gap-3 overflow-visible border-y border-cream-300 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <p role="status" aria-atomic="true" className="text-sm text-cocoa-500">
           {visible.length} treat{visible.length === 1 ? '' : 's'}
           {activeCategory ? ` in ${activeCategory.name}` : ''}
           {activeOffer && !activeCategory ? ` in ${activeOffer.title}` : ''}
+          {query.trim() ? ` matching “${query.trim()}”` : ''}
         </p>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              aria-label="Sort products"
-              className="w-full min-h-11 appearance-none rounded-xl border border-[#E7D5C1] bg-white pl-3 pr-9 text-sm font-medium text-[#2A1710] transition-colors focus:border-[#B3703D] focus:outline-none focus:ring-2 focus:ring-amber-400/30 sm:w-auto"
-            >
-              <option value="default">Sort: Recommended</option>
-              <option value="name">Name (A – Z)</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-            </select>
-            <svg
-              className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
+            <SortDropdown value={sort} onChange={setSort} />
           </div>
           {hasFilters && (
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-medium text-[#B3703D] transition-colors hover:bg-[#FFF7EA] hover:text-[#2A1710] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-medium text-terracotta-700 transition-colors hover:bg-ivory hover:text-cocoa-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900"
             >
               <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
@@ -168,30 +160,229 @@ export function ProductCatalog({
           )}
         </div>
       </div>
+      </div>
 
-      {visible.length === 0 ? (
-        <EmptyResults
-          hasFilters={hasFilters}
-          hasQuery={query.trim() !== ''}
-          offerActive={Boolean(activeOffer)}
-          offerTitle={activeOffer?.title ?? null}
-          onClear={clearFilters}
-        />
-      ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {visible.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              offer={p.bestOfferId ? offersById.get(p.bestOfferId) ?? null : null}
-              currency={currency}
-              hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
-              categoryName={categoriesById.get(p.category_id)?.name}
-            />
-          ))}
-        </div>
-      )}
+      <div className="catalog-enter catalog-enter-grid relative z-0">
+        {visible.length === 0 ? (
+          <EmptyResults
+            hasFilters={hasFilters}
+            hasQuery={query.trim() !== ''}
+            offerActive={Boolean(activeOffer)}
+            offerTitle={activeOffer?.title ?? null}
+            onClear={clearFilters}
+          />
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-6">
+            {visible.map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                offer={p.bestOfferId ? offersById.get(p.bestOfferId) ?? null : null}
+                currency={currency}
+                hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
+                categoryName={categoriesById.get(p.category_id)?.name}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
+  );
+}
+
+function SortDropdown({ value, onChange }: { value: SortKey; onChange: (value: SortKey) => void }) {
+  const [open, setOpen] = useState(false);
+  const selectedIndex = Math.max(0, SORT_OPTIONS.findIndex((option) => option.value === value));
+  const [activeIndex, setActiveIndex] = useState(selectedIndex);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const id = useId();
+  const labelId = `${id}-label`;
+  const triggerId = `${id}-trigger`;
+  const listboxId = `${id}-listbox`;
+
+  useEffect(() => {
+    if (!open) return;
+
+    const focusFrame = window.requestAnimationFrame(() => optionRefs.current[activeIndex]?.focus());
+    const dismissOnOutsidePointer = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', dismissOnOutsidePointer);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener('pointerdown', dismissOnOutsidePointer);
+    };
+  }, [activeIndex, open]);
+
+  const openAt = (index: number) => {
+    setActiveIndex(Math.max(0, Math.min(SORT_OPTIONS.length - 1, index)));
+    setOpen(true);
+  };
+
+  const closeAndRestoreFocus = () => {
+    setOpen(false);
+    window.requestAnimationFrame(() => triggerRef.current?.focus());
+  };
+
+  const select = (index: number) => {
+    onChange(SORT_OPTIONS[index].value);
+    closeAndRestoreFocus();
+  };
+
+  const moveFocus = (index: number) => {
+    const nextIndex = (index + SORT_OPTIONS.length) % SORT_OPTIONS.length;
+    setActiveIndex(nextIndex);
+    optionRefs.current[nextIndex]?.focus();
+  };
+
+  const handleTriggerKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowUp':
+        event.preventDefault();
+        openAt(selectedIndex);
+        break;
+      case 'Home':
+        event.preventDefault();
+        openAt(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        openAt(SORT_OPTIONS.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (open) closeAndRestoreFocus();
+        else openAt(selectedIndex);
+        break;
+      case 'Escape':
+        if (open) {
+          event.preventDefault();
+          closeAndRestoreFocus();
+        }
+        break;
+    }
+  };
+
+  const handleListboxKeyDown = (event: KeyboardEvent<HTMLUListElement>) => {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        moveFocus(activeIndex + 1);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        moveFocus(activeIndex - 1);
+        break;
+      case 'Home':
+        event.preventDefault();
+        moveFocus(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        moveFocus(SORT_OPTIONS.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        select(activeIndex);
+        break;
+      case 'Escape':
+        event.preventDefault();
+        closeAndRestoreFocus();
+        break;
+      case 'Tab':
+        // Let the browser move naturally, then remove the popup.
+        window.setTimeout(() => setOpen(false), 0);
+        break;
+    }
+  };
+
+  return (
+    <>
+      <span id={labelId} className="shrink-0 text-xs font-medium text-cocoa-500">
+        Sort by
+      </span>
+      <div
+        ref={rootRef}
+        className="relative min-w-0 flex-1 sm:flex-none"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false);
+        }}
+      >
+        <button
+          ref={triggerRef}
+          id={triggerId}
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listboxId}
+          aria-labelledby={`${labelId} ${triggerId}`}
+          onClick={() => (open ? closeAndRestoreFocus() : openAt(selectedIndex))}
+          onKeyDown={handleTriggerKeyDown}
+          className="flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-cream-300 bg-cream-100 px-3 text-left text-sm font-medium text-cocoa-900 transition-colors hover:border-terracotta-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 sm:min-w-52"
+        >
+          <span className="truncate">{SORT_OPTIONS[selectedIndex].label}</span>
+          <svg
+            aria-hidden="true"
+            className={`size-4 shrink-0 text-cocoa-500 transition-transform duration-[var(--dur-fast)] motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          >
+            <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+
+        {open && (
+          <ul
+            id={listboxId}
+            role="listbox"
+            aria-labelledby={`${labelId} ${triggerId}`}
+            onKeyDown={handleListboxKeyDown}
+            className="catalog-sort-popup absolute right-0 top-full z-30 mt-2 max-h-[min(16rem,calc(100dvh-6rem))] w-[min(18rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-2xl border border-cream-300 bg-cream-100 p-1.5 text-cocoa-900 shadow-lg"
+          >
+            {SORT_OPTIONS.map((option, index) => {
+              const selected = option.value === value;
+              const active = index === activeIndex;
+              return (
+                <li
+                  key={option.value}
+                  ref={(element) => {
+                    optionRefs.current[index] = element;
+                  }}
+                  role="option"
+                  aria-selected={selected}
+                  tabIndex={-1}
+                  onFocus={() => setActiveIndex(index)}
+                  onPointerMove={() => setActiveIndex(index)}
+                  onClick={() => select(index)}
+                  className={`flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-xl px-3 text-sm outline-none transition-colors ${
+                    active ? 'bg-cream-200 text-cocoa-900' : 'text-cocoa-500 hover:bg-ivory hover:text-cocoa-900'
+                  } focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cocoa-900`}
+                >
+                  <span>{option.label}</span>
+                  <svg
+                    aria-hidden="true"
+                    className={`size-4 shrink-0 text-terracotta-700 ${selected ? 'opacity-100' : 'opacity-0'}`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -211,14 +402,14 @@ function CategoryChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+      className={`flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-semibold transition-colors duration-[var(--dur-base)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 focus-visible:ring-offset-2 focus-visible:ring-offset-ivory ${
         active
-          ? 'border-[#2A1710] bg-[#2A1710] text-[#F5E6D5] shadow-sm ring-1 ring-[#F2B84B]/60'
-          : 'border-[#E7D5C1] bg-white text-[#6B4A33] hover:border-[#B3703D] hover:bg-[#FFF7EA] hover:text-[#2A1710]'
+          ? 'border-cocoa-900 bg-cocoa-900 text-ivory'
+          : 'border-cream-300 bg-cream-100 text-cocoa-500 hover:border-terracotta-700 hover:bg-ivory hover:text-cocoa-900'
       }`}
     >
       {active && (
-        <svg className="size-4 shrink-0 text-[#F2B84B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+        <svg className="size-4 shrink-0 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
           <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
@@ -245,44 +436,27 @@ function EmptyResults({
   offerTitle: string | null;
   onClear: () => void;
 }) {
-  const emptyShelf = !hasFilters && !offerActive;
+  const emptyShelf = !hasFilters;
+  const title = emptyShelf ? 'The shelf is empty for now' : 'No treats found';
+  const description = emptyShelf
+    ? 'Fresh treats will be here soon. Check back for the latest collection.'
+    : offerActive
+      ? `No treats match your current filters${offerTitle ? ` in “${offerTitle}”` : ' in this offer'}. Try browsing all products.`
+      : hasQuery
+        ? 'Try another search or clear your filters to browse all treats.'
+        : 'Try a different category or browse all treats.';
+
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#E7D5C1] bg-[#FFF7EA] px-6 py-16 text-center">
-      <span className="grid size-14 place-items-center rounded-full bg-[#F2B84B]/25 text-[#B3703D]">
-        <svg className="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <EmptyState
+      title={title}
+      description={description}
+      icon={
+        <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <circle cx="11" cy="11" r="7" />
           <path d="m21 21-4.35-4.35" strokeLinecap="round" />
         </svg>
-      </span>
-      <h3 className="mt-5 font-serif text-xl font-semibold text-[#2A1710]">
-        {offerActive
-          ? 'Nothing in this offer yet'
-          : hasQuery
-            ? 'No chocolates found'
-            : emptyShelf
-              ? 'The shelf is empty for now'
-              : 'No treats found'}
-      </h3>
-      <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#7A4E2D]">
-        {offerActive
-          ? offerTitle
-            ? `“${offerTitle}” has no products attached right now.`
-            : 'This offer has no products attached right now.'
-          : hasQuery
-            ? 'Try another search or browse all products.'
-            : emptyShelf
-              ? 'New treats are being made fresh — check back soon.'
-              : 'Try browsing a different category.'}
-      </p>
-      {offerActive || hasFilters ? (
-        <button
-          type="button"
-          onClick={onClear}
-          className="mt-6 rounded-xl bg-[#2A1710] px-5 py-2.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-        >
-          {offerActive ? 'Browse all products' : hasQuery ? 'Browse all products' : 'Clear filters'}
-        </button>
-      ) : null}
-    </div>
+      }
+      action={hasFilters ? <Button onClick={onClear}>Browse all products</Button> : undefined}
+    />
   );
 }

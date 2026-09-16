@@ -9,8 +9,8 @@ import { MobileCartBar } from '@/components/storefront/mobile-cart-bar';
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
-      <ToastProvider>
-        <div className="flex min-h-full flex-col bg-white">
+      <div className="storefront-shell flex min-h-dvh flex-col bg-ivory">
+        <ToastProvider appearance="storefront">
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-cocoa-900 focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-ivory focus:ring-2 focus:ring-gold-400"
@@ -22,10 +22,11 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
             {children}
           </main>
           <StorefrontFooter />
+          <div aria-hidden="true" className="storefront-clearance shrink-0 bg-cocoa-950" />
           <CartDrawer />
           <MobileCartBar />
-        </div>
-      </ToastProvider>
+        </ToastProvider>
+      </div>
     </CartProvider>
   );
 }

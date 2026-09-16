@@ -55,6 +55,35 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Measured fixed surfaces share space without covering each other or the footer. */
+.storefront-shell {
+  --storefront-cart-height: 0px;
+  --storefront-toast-height: 0px;
+}
+
+.storefront-toasts {
+  bottom: max(calc(var(--storefront-cart-height) + 0.75rem), calc(1rem + env(safe-area-inset-bottom)));
+}
+
+.storefront-clearance {
+  height: calc(var(--storefront-cart-height) + var(--storefront-toast-height));
+}
+
+.storefront-shell:has([data-storefront-toast]) .storefront-clearance {
+  height: calc(var(--storefront-cart-height) + var(--storefront-toast-height) + 1.75rem + env(safe-area-inset-bottom));
+}
+
+html:has(.storefront-shell) {
+  scroll-padding-top: 6rem;
+  scroll-padding-bottom: calc(12rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 64rem) {
+  html:has(.storefront-shell) {
+    scroll-padding-bottom: 6rem;
+  }
+}
+
 /* Global reduced-motion kill switch: honour the OS preference for every
    animation and transition, including looping keyframes. */
 @media (prefers-reduced-motion: reduce) {
@@ -178,5 +207,51 @@ body {
   to {
     opacity: 0;
     transform: translateY(-8px);
+  }
+}
+
+@keyframes catalog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes catalog-sort-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.catalog-enter {
+  animation: catalog-enter 300ms var(--ease-out-soft) backwards;
+}
+
+.catalog-enter-filters {
+  animation-delay: 60ms;
+}
+
+.catalog-enter-grid {
+  animation-delay: 120ms;
+}
+
+.catalog-sort-popup {
+  transform-origin: top right;
+  animation: catalog-sort-reveal 180ms var(--ease-out-soft) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-enter,
+  .catalog-sort-popup {
+    animation: none;
   }
 }
