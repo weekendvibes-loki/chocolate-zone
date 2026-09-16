@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { EmptyState } from '@/components/admin/empty-state';
+import { EmptyState } from '@/components/storefront/ui/empty-state';
+import { SectionHeading } from '@/components/storefront/ui/section-heading';
 import { ProductCard } from '@/components/storefront/product-card';
 import type { Catalog } from '@/types/domain';
 
@@ -11,27 +12,32 @@ export function FeaturedProducts({ catalog }: { catalog: Catalog }) {
   const featured = selectFeatured(catalog.products, FEATURED_LIMIT);
 
   return (
-    <section id="featured" className="border-y border-[#E7D5C1] bg-[#faf5ec]">
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">
-              Our favorites
-            </span>
-            <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
-              Customer-loved chocolates
-            </h2>
-            <p className="mt-3 max-w-lg text-sm leading-6 text-[#6B4A33]">
-              The ones our regulars keep coming back for, ready to order.
-            </p>
-          </div>
-          <Link
-            href="/products"
-            className="text-sm font-semibold text-[#B3703D] transition-colors hover:text-[#2A1710]"
-          >
-            View full menu →
-          </Link>
-        </div>
+    <section id="featured" className="border-y border-cream-300 bg-cream-200">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
+        <SectionHeading
+          eyebrow="Fresh favourites"
+          title="Today's Top Picks"
+          description="The ones our regulars keep coming back for, ready to order."
+          className="mb-10"
+          action={
+            <Link
+              href="/products"
+              className="group inline-flex min-h-11 items-center gap-1.5 rounded-lg text-sm font-semibold text-terracotta-700 transition-colors duration-[var(--dur-base)] ease-out-soft hover:text-cocoa-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-200 motion-reduce:transition-none"
+            >
+              View full menu
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="size-4 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          }
+        />
 
         {featured.length === 0 ? (
           <EmptyState title="No products yet" description="Fresh chocolates are being prepared." />

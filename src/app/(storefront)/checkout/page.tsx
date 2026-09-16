@@ -1,5 +1,5 @@
 import { getCatalog } from '@/lib/services/catalog';
-import { EmptyState } from '@/components/admin/empty-state';
+import { StorefrontErrorState } from '@/components/storefront/error-state';
 import { CheckoutForm } from '@/components/storefront/checkout-form';
 import type { Catalog } from '@/types/domain';
 
@@ -14,7 +14,7 @@ export default async function CheckoutPage() {
   if (!catalog) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <EmptyState
+        <StorefrontErrorState
           title="We couldn't load the store"
           description="Something went wrong while fetching store details. Please try again in a moment."
         />

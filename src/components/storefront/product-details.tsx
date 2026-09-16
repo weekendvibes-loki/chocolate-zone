@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatMoney, menuWasPriceMinor, toMinor } from '@/lib/pricing/money';
+import { formatMoney, toMinor } from '@/lib/pricing/money';
 import { discountLabel, isBundleOffer } from '@/components/storefront/offer-label';
 import { StockIndicator } from '@/components/storefront/stock-indicator';
 import { ProductImageFallback } from '@/components/storefront/product-image-fallback';
@@ -71,7 +71,6 @@ export function ProductDetails({
   const outOfStock = product.stock_qty === 0;
 
   const isBundle = bestOffer !== null && isBundleOffer(bestOffer);
-  const wasMinor = bestOffer && !isBundle ? null : menuWasPriceMinor(priceMinor);
 
   const [quantity, setQuantity] = useState(1);
 
@@ -98,50 +97,67 @@ export function ProductDetails({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-zinc-500" aria-label="Breadcrumb">
-        <Link href="/" className="transition-colors hover:text-zinc-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+      <nav
+        className="mb-8 flex flex-wrap items-center gap-2 text-sm text-cocoa-500"
+        aria-label="Breadcrumb"
+      >
+        <Link
+          href="/"
+          className="inline-flex min-h-11 items-center transition-colors hover:text-cocoa-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900"
+        >
           Home
         </Link>
-        <span aria-hidden="true" className="text-zinc-300">/</span>
-        <Link href="/products" className="transition-colors hover:text-zinc-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+        <span aria-hidden="true" className="text-terracotta-600">
+          /
+        </span>
+        <Link
+          href="/products"
+          className="inline-flex min-h-11 items-center transition-colors hover:text-cocoa-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900"
+        >
           Shop
         </Link>
         {category && (
           <>
-            <span aria-hidden="true" className="text-zinc-300">/</span>
-            <Link href={`/products?category=${category.id}`} className="transition-colors hover:text-zinc-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
+            <span aria-hidden="true" className="text-terracotta-600">
+              /
+            </span>
+            <Link
+              href={`/products?category=${category.id}`}
+              className="inline-flex min-h-11 items-center transition-colors hover:text-cocoa-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900"
+            >
               {category.name}
             </Link>
           </>
         )}
-        <span aria-hidden="true" className="text-zinc-300">/</span>
-        <span className="truncate font-medium text-zinc-900" aria-current="page">
+        <span aria-hidden="true" className="text-terracotta-600">
+          /
+        </span>
+        <span
+          className="truncate font-medium text-cocoa-900"
+          aria-current="page"
+        >
           {product.name}
         </span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2">
+      <div className="grid gap-6 sm:gap-10 lg:grid-cols-2">
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-[#f5ede1] shadow-sm">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-cream-300 bg-cream-200 shadow-sm">
             {images.length > 0 ? (
               <Image
                 src={images[activeImage]}
                 alt={product.name}
                 fill
-                priority
+                preload={activeImage === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
             ) : (
               <ProductImageFallback name={product.name} />
             )}
-            {bestOffer && !isBundle ? (
-              <span className="absolute left-4 top-4 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-900 shadow-sm">
+            {bestOffer && !isBundle && (
+              <span className="absolute left-4 top-4 rounded-full bg-gold-400 px-3 py-1 text-xs font-bold text-cocoa-900 shadow-sm">
                 {discountLabel(bestOffer, currency)}
-              </span>
-            ) : (
-              <span className="absolute left-4 top-4 rounded-full bg-[#F2B84B] px-3 py-1 text-xs font-bold text-[#3A2417] shadow-sm">
-                10% OFF
               </span>
             )}
           </div>
@@ -154,11 +170,19 @@ export function ProductDetails({
                   onClick={() => setActiveImage(i)}
                   aria-label={`View image ${i + 1}`}
                   aria-pressed={activeImage === i}
-                  className={`relative h-20 w-20 overflow-hidden rounded-lg border-2 bg-[#f5ede1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
-                    activeImage === i ? 'border-amber-500' : 'border-transparent'
+                  className={`relative h-20 w-20 overflow-hidden rounded-lg border-2 bg-cream-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 ${
+                    activeImage === i
+                      ? "border-terracotta-600"
+                      : "border-transparent"
                   }`}
                 >
-                  <Image src={src} alt="" fill sizes="80px" className="object-cover" />
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -167,33 +191,34 @@ export function ProductDetails({
 
         <div className="flex flex-col">
           {category && (
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">{category.name}</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-terracotta-700">
+              {category.name}
+            </span>
           )}
-          <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-[#2A1710] sm:text-4xl">
+          <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-cocoa-900 sm:text-4xl">
             {product.name}
           </h1>
 
           <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-            {wasMinor !== null && (
-              <span className="text-lg font-medium text-zinc-400 line-through">{formatMoney(wasMinor, currency)}</span>
-            )}
-            <span className="text-3xl font-bold text-[#2A1710] sm:text-4xl">{formatMoney(priceMinor, currency)}</span>
-            {bestOffer && !isBundle ? (
-              <span className="rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-zinc-900">
+            <span className="text-3xl font-bold text-cocoa-900 sm:text-4xl">
+              {formatMoney(priceMinor, currency)}
+            </span>
+            {bestOffer && !isBundle && (
+              <span className="rounded-full bg-gold-400 px-2.5 py-1 text-xs font-bold text-cocoa-900">
                 {discountLabel(bestOffer, currency)}
               </span>
-            ) : (
-              <span className="rounded-full bg-[#F2B84B] px-2.5 py-1 text-xs font-bold text-[#3A2417]">10% OFF</span>
             )}
           </div>
           {deltaMinor !== 0 && (
-            <p className="mt-1 text-sm text-[#6B4A33]">
+            <p className="mt-1 text-sm text-cocoa-500">
               Base price: {formatMoney(baseMinor, currency)}
             </p>
           )}
 
           {product.description && (
-            <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-[#6B4A33]">{product.description}</p>
+            <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-cocoa-500">
+              {product.description}
+            </p>
           )}
 
           <div className="mt-4">
@@ -204,7 +229,9 @@ export function ProductDetails({
             <div className="mt-7 space-y-6">
               {groups.map((g) => (
                 <fieldset key={g.name}>
-                  <legend className="text-sm font-semibold text-zinc-900">{g.name}</legend>
+                  <legend className="text-sm font-semibold text-cocoa-900">
+                    {g.name}
+                  </legend>
                   <div className="mt-2.5 flex flex-wrap gap-2">
                     {g.options.map((v) => {
                       const delta = toMinor(v.price_delta);
@@ -213,19 +240,28 @@ export function ProductDetails({
                         <button
                           key={v.id}
                           type="button"
-                          onClick={() => setSelected((prev) => ({ ...prev, [g.name]: v.option }))}
+                          onClick={() =>
+                            setSelected((prev) => ({
+                              ...prev,
+                              [g.name]: v.option,
+                            }))
+                          }
                           aria-pressed={isSelected}
-                          className={`inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+                          className={`inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 ${
                             isSelected
-                              ? 'border-[#2A1710] bg-[#2A1710] text-[#F5E6D5] shadow-sm'
-                              : 'border-[#E7D5C1] bg-white text-[#6B4A33] hover:border-[#B3703D] hover:text-[#2A1710]'
+                              ? "border-cocoa-900 bg-cocoa-900 text-ivory shadow-sm"
+                              : "border-cream-300 bg-cream-100 text-cocoa-500 hover:border-terracotta-700 hover:text-cocoa-900"
                           }`}
                         >
                           {v.option}
                           {delta !== 0 && (
-                            <span className={isSelected ? 'text-zinc-300' : 'text-zinc-500'}>
-                              {' '}
-                              ({delta > 0 ? '+' : '-'}
+                            <span
+                              className={
+                                isSelected ? "text-cream-200" : "text-cocoa-500"
+                              }
+                            >
+                              {" "}
+                              ({delta > 0 ? "+" : "-"}
                               {formatMoney(Math.abs(delta), currency)})
                             </span>
                           )}
@@ -238,22 +274,34 @@ export function ProductDetails({
             </div>
           )}
 
-          <div className="mt-7 rounded-2xl border border-[#E7D5C1] bg-[#FFF7EA] p-4 sm:p-5">
+          <div className="mt-7 rounded-2xl border border-cream-300 bg-ivory p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm font-semibold text-[#2A1710]">Quantity</span>
-              <div className="inline-flex items-center overflow-hidden rounded-xl border border-[#E7D5C1] bg-white">
+              <span className="text-sm font-semibold text-cocoa-900">
+                Quantity
+              </span>
+              <div className="inline-flex items-center overflow-hidden rounded-xl border border-cream-300 bg-cream-100">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={outOfStock || quantity <= 1}
                   aria-label="Decrease quantity"
-                  className="grid size-11 place-items-center text-[#B3703D] transition-colors hover:bg-[#FFF7EA] hover:text-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="grid size-11 place-items-center text-terracotta-700 transition-colors hover:bg-ivory hover:text-cocoa-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cocoa-900 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg
+                    className="size-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
                     <path d="M5 12h14" strokeLinecap="round" />
                   </svg>
                 </button>
-                <span className="grid w-12 place-items-center text-base font-bold text-[#2A1710]" aria-live="polite">
+                <span
+                  className="grid w-12 place-items-center text-base font-bold text-cocoa-900"
+                  aria-live="polite"
+                >
                   {quantity}
                 </span>
                 <button
@@ -261,19 +309,39 @@ export function ProductDetails({
                   onClick={() => setQuantity((q) => Math.min(9, q + 1))}
                   disabled={outOfStock || quantity >= 9}
                   aria-label="Increase quantity"
-                  className="grid size-11 place-items-center text-[#2A1710] transition-colors hover:bg-[#FFF7EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="grid size-11 place-items-center text-cocoa-900 transition-colors hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cocoa-900 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg
+                    className="size-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
                     <path d="M12 5v14M5 12h14" strokeLinecap="round" />
                   </svg>
                 </button>
               </div>
-              <span className="text-sm font-medium text-[#6B4A33]">× {formatMoney(priceMinor, currency)}</span>
+              <span className="text-sm font-medium text-cocoa-500">
+                × {formatMoney(priceMinor, currency)}
+              </span>
             </div>
             {inCartQty > 0 && (
-              <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-[#B3703D]">
-                <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+              <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-terracotta-700">
+                <svg
+                  className="size-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 13l4 4L19 7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 {inCartQty} in your cart
               </p>
@@ -282,44 +350,61 @@ export function ProductDetails({
               type="button"
               onClick={handleAddToCart}
               disabled={outOfStock}
-              className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2A1710] px-6 py-3.5 text-sm font-semibold text-[#F5E6D5] transition-colors hover:bg-[#1E100B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-cocoa-900 px-6 py-3.5 text-sm font-semibold text-ivory transition-colors hover:bg-cocoa-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
             >
-              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <svg
+                className="size-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                aria-hidden="true"
+              >
                 <path d="M6 7h12l1 13H5L6 7Z" strokeLinejoin="round" />
                 <path d="M9 10a3 3 0 0 1 6 0" strokeLinecap="round" />
               </svg>
-              {outOfStock ? 'Out of stock' : quantity > 1 ? `Add ${quantity} to Cart` : 'Add to Cart'}
+              {outOfStock
+                ? "Out of stock"
+                : quantity > 1
+                  ? `Add ${quantity} to Cart`
+                  : "Add to Cart"}
             </button>
           </div>
         </div>
       </div>
 
       {related.length > 0 && (
-        <section className="mt-16 border-t border-[#E7D5C1] pt-10">
+        <section className="mt-16 border-t border-cream-300 pt-10">
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#B3703D]">Keep exploring</span>
-              <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-[#2A1710] sm:text-3xl">
+              <span className="text-xs font-semibold uppercase tracking-widest text-terracotta-700">
+                Keep exploring
+              </span>
+              <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-cocoa-900 sm:text-3xl">
                 You might also like
               </h2>
             </div>
             <Link
               href="/products"
-              className="text-sm font-semibold text-[#B3703D] transition-colors hover:text-[#2A1710] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-terracotta-700 transition-colors hover:text-cocoa-900 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-900"
             >
               View all →
             </Link>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {related.map((p) => {
-              const offer = p.bestOfferId ? (offersById.get(p.bestOfferId) ?? null) : null;
+              const offer = p.bestOfferId
+                ? (offersById.get(p.bestOfferId) ?? null)
+                : null;
               return (
                 <ProductCard
                   key={p.id}
                   product={p}
                   offer={offer}
                   currency={currency}
-                  hasVariants={(catalog.variantsByProduct[p.id]?.length ?? 0) > 0}
+                  hasVariants={
+                    (catalog.variantsByProduct[p.id]?.length ?? 0) > 0
+                  }
                   categoryName={categoriesById.get(p.category_id)?.name}
                 />
               );
